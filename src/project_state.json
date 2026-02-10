@@ -1,12 +1,18 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "Create a website similar to https://stranger-nodes-55e.caffeine.xyz/ named \"tripple host\".",
+  "projectStateVersion": 19,
+  "summary": "Create a website similar to https://stranger-nodes-55e.caffeine.xyz/ named \"tripple host\", with full website customization capabilities (not only pricing) plus user login.",
   "architectural_notes": [
-    "Add authenticated admin interface to edit site content and manage pricing plans (create/update/delete), rather than hardcoded-only plans."
+    "Add authenticated admin interface to edit site content and manage pricing plans (create/update/delete), rather than hardcoded-only plans.",
+    "Admin onboarding/management should be handled via website UI (not email-based), including admin allowlist management after initial bootstrap.",
+    "Expand the admin interface from pricing-only management to broader site content customization (CMS-like editing) via the website UI.",
+    "Add support for non-admin user authentication/login in addition to admin authentication."
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Admin option/access appears to be removed in the live app, preventing the user from adding pricing plans and making site changes via the admin UI.",
+    "Version 8 is missing functionality that existed in Version 7; user requests restoring/adding all Version 7 features into the current version."
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-a-responsive-marketing-landing-website-that-closely-matches-the-structure-layout-and-interactions-of-the-reference-site-at-https-stranger-nodes-55e-caffeine-xyz-same-overall-page-sections-spacing-rhythm-component-patterns-and-any-visible-hover-scroll-animations-but-rebrand-all-naming-to-tripple-host",
@@ -95,6 +101,118 @@
         "REQ-13"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-replace-the-logo-image-for-only-the-selected-element-at-xpath-html-1-body-1-div-3-div-1-img-1-the-header-desktop-logo-img-in-frontend-src-components-landing-header-tsx-by-updating-its-src-to-a-newly-generated-tripple-host-logo-asset-served-from-frontend-public-assets-generated-and-update-its-alt-text-to-tripple-host",
+      "title": "Replace the logo image for ONLY the selected element at XPath /html[1]/body[1]/div[3]/div[1]/img[1] (the header desktop logo <img> in frontend/src/components/landing/Header.tsx) by updating its src to a newly generated Tripple Host logo asset served from frontend/public/assets/generated, and update its alt text to \"Tripple Host\".",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-centralized-marketing-copy-frontend-src-content-sitecopy-ts-to-clearly-state-a-strict-no-refund-policy-by-replacing-any-existing-refund-positive-messaging-e-g-the-current-faq-item-that-claims-a-30-day-money-back-guarantee-with-no-refund-wording-in-english",
+      "title": "Update the centralized marketing copy (frontend/src/content/siteCopy.ts) to clearly state a strict \"No Refund\" policy by replacing any existing refund-positive messaging (e.g., the current FAQ item that claims a 30-day money-back guarantee) with no-refund wording in English.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visible-no-refund-disclaimer-to-purchase-related-areas-of-the-landing-page-using-sitecopy-as-the-single-source-of-truth-and-render-it-in-the-ui-near-the-pricing-and-or-contact-final-cta-areas-so-users-see-it-before-clicking-purchase-contact-actions",
+      "title": "Add a visible \"No Refund\" disclaimer to purchase-related areas of the landing page using siteCopy as the single source of truth, and render it in the UI near the Pricing and/or Contact (final CTA) areas so users see it before clicking purchase/contact actions.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-cms-like-admin-customization-system-that-allows-admins-internet-identity-principals-to-edit-the-landing-page-s-marketing-content-beyond-pricing-e-g-header-cta-navigation-labels-hero-badge-title-subtitle-ctas-stats-features-section-title-subtitle-items-faq-title-subtitle-items-final-cta-text-footer-tagline-and-link-labels-from-the-website-ui-and-persist-those-changes-in-the-motoko-backend",
+      "title": "Add a CMS-like admin customization system that allows admins (Internet Identity principals) to edit the landing page’s marketing content beyond pricing (e.g., header CTA, navigation labels, hero badge/title/subtitle/CTAs, stats, features section title/subtitle/items, FAQ title/subtitle/items, final CTA text, footer tagline and link labels) from the website UI, and persist those changes in the Motoko backend.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-website-based-logo-changer-for-admins-allow-an-admin-to-upload-a-new-logo-image-via-the-admin-ui-persist-it-in-the-motoko-backend-and-render-the-latest-uploaded-logo-in-the-header-and-any-other-existing-logo-locations-for-all-visitors",
+      "title": "Implement a website-based “logo changer” for admins: allow an admin to upload a new logo image via the admin UI, persist it in the Motoko backend, and render the latest uploaded logo in the header (and any other existing logo locations) for all visitors.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-non-admin-user-login-experience-using-the-existing-internet-identity-sign-in-out-controls-including-a-visible-logged-in-state-and-a-basic-user-profile-page-section-that-reads-and-updates-the-caller-s-profile-via-the-backend-getcalleruserprofile-savecalleruserprofile",
+      "title": "Implement a non-admin user login experience using the existing Internet Identity sign-in/out controls, including a visible logged-in state and a basic user profile page/section that reads and updates the caller’s profile via the backend (getCallerUserProfile/saveCallerUserProfile).",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-backend-actor-backend-main-mo-to-store-and-serve-site-wide-customizable-settings-content-and-the-uploaded-logo-with-admin-only-write-access-and-public-read-access-and-update-frontend-react-query-hooks-to-fetch-these-settings-and-invalidate-refetch-them-after-admin-updates",
+      "title": "Extend the backend actor (backend/main.mo) to store and serve site-wide customizable settings/content and the uploaded logo, with admin-only write access and public read access, and update frontend React Query hooks to fetch these settings and invalidate/refetch them after admin updates.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-existing-admin-entry-flow-so-the-admin-panel-can-manage-both-pricing-plans-and-the-new-website-customization-and-logo-changer-features-from-a-single-clear-admin-area-accessible-from-the-header-admin-button",
+      "title": "Update the existing admin entry flow so the admin panel can manage both pricing plans and the new “website customization” and “logo changer” features from a single, clear admin area accessible from the Header Admin button.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-frontend-admin-setup-flow-so-that-when-a-user-is-signed-in-but-no-admins-exist-yet-the-ui-allows-the-user-to-claim-the-first-admin-role-after-which-the-normal-admin-button-becomes-visible-and-the-existing-admin-panel-can-be-opened",
+      "title": "Add a frontend “Admin Setup” flow so that when a user is signed in but no admins exist yet, the UI allows the user to claim the first admin role, after which the normal Admin button becomes visible and the existing Admin Panel can be opened.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-live-app-experience-makes-the-missing-admin-configuration-state-diagnosable-instead-of-silently-hiding-admin-capabilities-by-showing-an-english-explanation-when-a-signed-in-user-tries-to-access-admin-functionality-without-being-an-admin-including-guidance-to-contact-an-administrator-if-admins-already-exist",
+      "title": "Ensure the live app experience makes the missing-admin configuration state diagnosable (instead of silently hiding admin capabilities) by showing an English explanation when a signed-in user tries to access admin functionality without being an admin, including guidance to contact an administrator if admins already exist.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-all-end-user-and-admin-facing-functionality-that-existed-in-version-7-but-is-missing-or-broken-in-the-current-version-8-build-prioritizing-the-admin-entry-access-experience-so-admins-can-again-manage-pricing-plans-site-content-customization-and-logo-uploads-from-the-website-ui",
+      "title": "Restore all end-user and admin-facing functionality that existed in Version 7 but is missing or broken in the current Version 8 build, prioritizing the admin entry/access experience so admins can again manage pricing plans, site content customization, and logo uploads from the website UI.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-reliable-explicit-do-any-admins-exist-check-in-the-motoko-backend-and-update-the-frontend-to-use-it-so-that-admin-bootstrap-and-admin-button-visibility-cannot-regress-due-to-heuristic-client-side-logic",
+      "title": "Implement a reliable, explicit “do any admins exist” check in the Motoko backend and update the frontend to use it so that admin bootstrap and Admin button visibility cannot regress due to heuristic client-side logic.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-implement-website-based-admin-allowlist-management-version-7-parity-provide-an-admin-ui-to-view-the-current-admin-list-and-add-remove-admin-principals-persisted-and-enforced-by-the-backend-admin-only-write-safe-read-access-as-appropriate",
+      "title": "Restore/implement website-based admin allowlist management (Version 7 parity): provide an admin UI to view the current admin list and add/remove admin principals, persisted and enforced by the backend (admin-only write; safe read access as appropriate).",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rename-the-site-wide-talk-to-sales-label-to-purchase-plans-while-keeping-the-existing-behavior-of-opening-https-discord-gg-nmcbdxyvfe-in-a-new-browser-tab-when-clicked",
+      "title": "Rename the site-wide “Talk to Sales” label to “Purchase Plans” while keeping the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -142,6 +260,56 @@
       "id": "AR-7",
       "summary": "Update the \"Talk to Sales\" button behavior to open the user's Discord invite link (https://discord.gg/NMcBdXYVFe).",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Rename the \"Talk to Sales\" button/label to \"Purchase Plans\" across the site (and keep behavior consistent with the existing CTA/link logic).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Replace the website logo with a new \"Tripple Host\" logo (update the logo asset and ensure it renders in the header/hero where applicable).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Make admin access and admin management fully website-based (admin login/access and admin allowlist changes handled via the site UI), not via email.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Add a \"No Refund\" policy section (or clearly stated copy) on the Tripple Host website and update pricing/purchase-related text to mention the no-refund policy.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add full website customization via an authenticated admin interface (CMS-like) to edit site content/sections beyond just pricing plans.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Add an admin \"logo changer\" feature so admins can upload/replace the Tripple Host logo via the website UI (not code changes).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Implement user login (non-admin user authentication) for the Tripple Host website.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Implement a website-based admin bootstrap mechanism in the Motoko backend so that if there are currently no admins configured, the first authenticated Internet Identity principal can claim admin privileges, and after that only existing admins can manage the admin allowlist.",
+      "reqIds": [
+        "REQ-22"
+      ],
       "status": "pending"
     }
   ],

@@ -1,9 +1,14 @@
 import { ArrowRight, Zap, Shield, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { siteCopy } from '../../content/siteCopy';
+import { useGetSiteSettings } from '../../hooks/useQueries';
+import { mergeSiteSettings } from '../../utils/siteSettings';
 import ScrollReveal from './ScrollReveal';
 
 export default function Hero() {
+  const { data: backendSettings } = useGetSiteSettings();
+  const settings = mergeSiteSettings(backendSettings);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -29,26 +34,26 @@ export default function Hero() {
           <ScrollReveal>
             <div className="inline-flex items-center space-x-2 bg-accent/50 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-border">
               <Zap className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{siteCopy.hero.badge}</span>
+              <span className="text-sm font-medium">{settings.heroBadge}</span>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay={0.1}>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              {siteCopy.hero.title}
+              {settings.heroTitle}
             </h1>
           </ScrollReveal>
 
           <ScrollReveal delay={0.2}>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-              {siteCopy.hero.subtitle}
+              {settings.heroSubtitle}
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={0.3}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Button onClick={() => scrollToSection('pricing')} size="lg" className="text-base px-8 group">
-                {siteCopy.hero.primaryCTA}
+                {settings.heroCta1Text}
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
@@ -57,7 +62,7 @@ export default function Hero() {
                 size="lg"
                 className="text-base px-8"
               >
-                {siteCopy.hero.secondaryCTA}
+                {settings.heroCta2Text}
               </Button>
             </div>
           </ScrollReveal>

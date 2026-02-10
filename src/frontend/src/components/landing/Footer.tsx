@@ -1,10 +1,17 @@
 import { SiGithub, SiX, SiLinkedin } from 'react-icons/si';
 import { Heart } from 'lucide-react';
 import { siteCopy } from '../../content/siteCopy';
+import { useGetLogo, useGetSiteSettings } from '../../hooks/useQueries';
+import { mergeSiteSettings } from '../../utils/siteSettings';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const appIdentifier = typeof window !== 'undefined' ? window.location.hostname : 'tripple-host';
+  const { data: logo } = useGetLogo();
+  const { data: backendSettings } = useGetSiteSettings();
+
+  const settings = mergeSiteSettings(backendSettings);
+  const logoUrl = logo?.getDirectURL() || '/assets/generated/tripple-host-logo.dim_512x256.png';
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -20,11 +27,11 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <img
-              src="/assets/generated/tripple-host-logo.dim_512x256.png"
-              alt="tripple host"
+              src={logoUrl}
+              alt="Logo"
               className="h-8 w-auto mb-4"
             />
-            <p className="text-sm text-muted-foreground">{siteCopy.footer.tagline}</p>
+            <p className="text-sm text-muted-foreground">{settings.footerTagline}</p>
           </div>
 
           {/* Links Columns */}

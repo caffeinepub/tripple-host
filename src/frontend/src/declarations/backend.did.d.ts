@@ -10,6 +10,28 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type AdminPrincipal = string;
+export interface EditableSettings {
+  'footerTagline' : [] | [string],
+  'footerSupport' : [] | [string],
+  'statsTitle' : [] | [string],
+  'faqSubtitle' : [] | [string],
+  'navCtaLink' : [] | [string],
+  'heroCta2Text' : [] | [string],
+  'navCtaText' : [] | [string],
+  'footerPrivacy' : [] | [string],
+  'faqTitle' : [] | [string],
+  'featuresSubtitle' : [] | [string],
+  'heroBadge' : [] | [string],
+  'heroSubtitle' : [] | [string],
+  'featuresTitle' : [] | [string],
+  'statsSubtitle' : [] | [string],
+  'heroCta1Text' : [] | [string],
+  'footerCta' : [] | [string],
+  'footerTerms' : [] | [string],
+  'heroTitle' : [] | [string],
+}
+export type ExternalBlob = Uint8Array;
 export interface PricingPlan {
   'id' : bigint,
   'durationDays' : bigint,
@@ -18,29 +40,83 @@ export interface PricingPlan {
   'description' : string,
   'priceCents' : bigint,
 }
+export interface SiteSettings {
+  'footerTagline' : string,
+  'footerSupport' : string,
+  'statsTitle' : string,
+  'faqSubtitle' : string,
+  'navCtaLink' : string,
+  'heroCta2Text' : string,
+  'navCtaText' : string,
+  'footerPrivacy' : string,
+  'faqTitle' : string,
+  'featuresSubtitle' : string,
+  'heroBadge' : string,
+  'heroSubtitle' : string,
+  'featuresTitle' : string,
+  'statsSubtitle' : string,
+  'heroCta1Text' : string,
+  'footerCta' : string,
+  'footerTerms' : string,
+  'heroTitle' : string,
+}
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addAdmin' : ActorMethod<[AdminPrincipal], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createPricingPlan' : ActorMethod<
     [string, string, bigint, bigint, Array<string>],
     bigint
   >,
   'deletePricingPlan' : ActorMethod<[bigint], undefined>,
+  'doesAdminExist' : ActorMethod<[], boolean>,
+  'getAdminList' : ActorMethod<[], Array<AdminPrincipal>>,
   'getAllPricingPlans' : ActorMethod<[], Array<PricingPlan>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getLogo' : ActorMethod<[], [] | [ExternalBlob]>,
   'getPricingPlan' : ActorMethod<[bigint], [] | [PricingPlan]>,
+  'getSiteSettings' : ActorMethod<[], SiteSettings>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'removeAdmin' : ActorMethod<[AdminPrincipal], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'updateLogo' : ActorMethod<[ExternalBlob], undefined>,
   'updatePricingPlan' : ActorMethod<
     [bigint, string, string, bigint, bigint, Array<string>],
     undefined
   >,
+  'updateSiteSettings' : ActorMethod<[EditableSettings], SiteSettings>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

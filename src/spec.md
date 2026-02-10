@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Update landing-page CTAs so the primary CTA reads “PLANS” everywhere, and make “Talk to Sales” open the provided Discord invite link.
+**Goal:** Restore Version 7 parity in the current Version 8 build, focusing on reliable admin access/bootstrap, admin management tooling, and CTA label consistency.
 
 **Planned changes:**
-- Update centralized copy in `frontend/src/content/siteCopy.ts` so every UI label currently showing “Start Free Trial” displays exactly “PLANS”.
-- Ensure hero and final/contact CTA sections read “PLANS” via the centralized copy (no hardcoded component text).
-- Change the “Talk to Sales” button click behavior to open `https://discord.gg/NMcBdXYVFe` in a new tab with safe external-link handling (e.g., `noopener,noreferrer`), while keeping its current outline styling and label.
+- Restore missing/broken Version 7 end-user and admin-facing flows in Version 8, prioritizing the admin entry/access experience (Admin entry point, Admin Panel access, and Admin Setup when no admins exist).
+- Reinstate Admin Panel management areas for pricing plans CRUD, site content customization, and logo upload/replace, with clear English success/error states.
+- Add a backend query to reliably determine whether any admins exist and update the frontend to use it for admin bootstrap and correct Header button visibility.
+- Restore website-based admin allowlist management: Admin Panel section to view/add/remove admin principals, persisted and enforced by the backend (admin-only writes).
+- Rename all site-wide “Talk to Sales” labels to “Purchase Plans” while preserving the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab.
 
-**User-visible outcome:** Users see “PLANS” as the primary CTA label across the landing page, and clicking “Talk to Sales” opens the Discord invite in a new browser tab.
+**User-visible outcome:** Admins can again access the Admin Panel from the Header to manage plans, content, logos, and the admin list; first-time setups can claim the first admin role when no admins exist; non-admin users retain normal signed-in/profile functionality and see a clear access-denied message when attempting admin-only actions; the CTA now reads “Purchase Plans” and still opens the same Discord link.

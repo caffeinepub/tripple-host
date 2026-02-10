@@ -8,6 +8,18 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const AdminPrincipal = IDL.Text;
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -22,9 +34,77 @@ export const PricingPlan = IDL.Record({
   'priceCents' : IDL.Nat,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const SiteSettings = IDL.Record({
+  'footerTagline' : IDL.Text,
+  'footerSupport' : IDL.Text,
+  'statsTitle' : IDL.Text,
+  'faqSubtitle' : IDL.Text,
+  'navCtaLink' : IDL.Text,
+  'heroCta2Text' : IDL.Text,
+  'navCtaText' : IDL.Text,
+  'footerPrivacy' : IDL.Text,
+  'faqTitle' : IDL.Text,
+  'featuresSubtitle' : IDL.Text,
+  'heroBadge' : IDL.Text,
+  'heroSubtitle' : IDL.Text,
+  'featuresTitle' : IDL.Text,
+  'statsSubtitle' : IDL.Text,
+  'heroCta1Text' : IDL.Text,
+  'footerCta' : IDL.Text,
+  'footerTerms' : IDL.Text,
+  'heroTitle' : IDL.Text,
+});
+export const EditableSettings = IDL.Record({
+  'footerTagline' : IDL.Opt(IDL.Text),
+  'footerSupport' : IDL.Opt(IDL.Text),
+  'statsTitle' : IDL.Opt(IDL.Text),
+  'faqSubtitle' : IDL.Opt(IDL.Text),
+  'navCtaLink' : IDL.Opt(IDL.Text),
+  'heroCta2Text' : IDL.Opt(IDL.Text),
+  'navCtaText' : IDL.Opt(IDL.Text),
+  'footerPrivacy' : IDL.Opt(IDL.Text),
+  'faqTitle' : IDL.Opt(IDL.Text),
+  'featuresSubtitle' : IDL.Opt(IDL.Text),
+  'heroBadge' : IDL.Opt(IDL.Text),
+  'heroSubtitle' : IDL.Opt(IDL.Text),
+  'featuresTitle' : IDL.Opt(IDL.Text),
+  'statsSubtitle' : IDL.Opt(IDL.Text),
+  'heroCta1Text' : IDL.Opt(IDL.Text),
+  'footerCta' : IDL.Opt(IDL.Text),
+  'footerTerms' : IDL.Opt(IDL.Text),
+  'heroTitle' : IDL.Opt(IDL.Text),
+});
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addAdmin' : IDL.Func([AdminPrincipal], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createPricingPlan' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Vec(IDL.Text)],
@@ -32,27 +112,46 @@ export const idlService = IDL.Service({
       [],
     ),
   'deletePricingPlan' : IDL.Func([IDL.Nat], [], []),
+  'doesAdminExist' : IDL.Func([], [IDL.Bool], ['query']),
+  'getAdminList' : IDL.Func([], [IDL.Vec(AdminPrincipal)], ['query']),
   'getAllPricingPlans' : IDL.Func([], [IDL.Vec(PricingPlan)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getLogo' : IDL.Func([], [IDL.Opt(ExternalBlob)], ['query']),
   'getPricingPlan' : IDL.Func([IDL.Nat], [IDL.Opt(PricingPlan)], ['query']),
+  'getSiteSettings' : IDL.Func([], [SiteSettings], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'removeAdmin' : IDL.Func([AdminPrincipal], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'updateLogo' : IDL.Func([ExternalBlob], [], []),
   'updatePricingPlan' : IDL.Func(
       [IDL.Nat, IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Vec(IDL.Text)],
       [],
       [],
     ),
+  'updateSiteSettings' : IDL.Func([EditableSettings], [SiteSettings], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const AdminPrincipal = IDL.Text;
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -67,9 +166,77 @@ export const idlFactory = ({ IDL }) => {
     'priceCents' : IDL.Nat,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const SiteSettings = IDL.Record({
+    'footerTagline' : IDL.Text,
+    'footerSupport' : IDL.Text,
+    'statsTitle' : IDL.Text,
+    'faqSubtitle' : IDL.Text,
+    'navCtaLink' : IDL.Text,
+    'heroCta2Text' : IDL.Text,
+    'navCtaText' : IDL.Text,
+    'footerPrivacy' : IDL.Text,
+    'faqTitle' : IDL.Text,
+    'featuresSubtitle' : IDL.Text,
+    'heroBadge' : IDL.Text,
+    'heroSubtitle' : IDL.Text,
+    'featuresTitle' : IDL.Text,
+    'statsSubtitle' : IDL.Text,
+    'heroCta1Text' : IDL.Text,
+    'footerCta' : IDL.Text,
+    'footerTerms' : IDL.Text,
+    'heroTitle' : IDL.Text,
+  });
+  const EditableSettings = IDL.Record({
+    'footerTagline' : IDL.Opt(IDL.Text),
+    'footerSupport' : IDL.Opt(IDL.Text),
+    'statsTitle' : IDL.Opt(IDL.Text),
+    'faqSubtitle' : IDL.Opt(IDL.Text),
+    'navCtaLink' : IDL.Opt(IDL.Text),
+    'heroCta2Text' : IDL.Opt(IDL.Text),
+    'navCtaText' : IDL.Opt(IDL.Text),
+    'footerPrivacy' : IDL.Opt(IDL.Text),
+    'faqTitle' : IDL.Opt(IDL.Text),
+    'featuresSubtitle' : IDL.Opt(IDL.Text),
+    'heroBadge' : IDL.Opt(IDL.Text),
+    'heroSubtitle' : IDL.Opt(IDL.Text),
+    'featuresTitle' : IDL.Opt(IDL.Text),
+    'statsSubtitle' : IDL.Opt(IDL.Text),
+    'heroCta1Text' : IDL.Opt(IDL.Text),
+    'footerCta' : IDL.Opt(IDL.Text),
+    'footerTerms' : IDL.Opt(IDL.Text),
+    'heroTitle' : IDL.Opt(IDL.Text),
+  });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addAdmin' : IDL.Func([AdminPrincipal], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createPricingPlan' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Vec(IDL.Text)],
@@ -77,22 +244,29 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'deletePricingPlan' : IDL.Func([IDL.Nat], [], []),
+    'doesAdminExist' : IDL.Func([], [IDL.Bool], ['query']),
+    'getAdminList' : IDL.Func([], [IDL.Vec(AdminPrincipal)], ['query']),
     'getAllPricingPlans' : IDL.Func([], [IDL.Vec(PricingPlan)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getLogo' : IDL.Func([], [IDL.Opt(ExternalBlob)], ['query']),
     'getPricingPlan' : IDL.Func([IDL.Nat], [IDL.Opt(PricingPlan)], ['query']),
+    'getSiteSettings' : IDL.Func([], [SiteSettings], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'removeAdmin' : IDL.Func([AdminPrincipal], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'updateLogo' : IDL.Func([ExternalBlob], [], []),
     'updatePricingPlan' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Vec(IDL.Text)],
         [],
         [],
       ),
+    'updateSiteSettings' : IDL.Func([EditableSettings], [SiteSettings], []),
   });
 };
 

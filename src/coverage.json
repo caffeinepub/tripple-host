@@ -1,46 +1,100 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T06:28:05.295Z",
+  "generatedAt": "2026-02-10T08:29:08.316Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
-        "id": "REQ-12",
-        "summary": "Rename every visible CTA label that currently displays \"Start Free Trial\" to \"PLANS\" using the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth.",
+        "id": "REQ-25",
+        "summary": "Restore all end-user and admin-facing functionality that existed in Version 7 but is missing or broken in the current Version 8 build, prioritizing the admin entry/access experience so admins can again manage pricing plans, site content customization, and logo uploads from the website UI.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/content/siteCopy.ts"
+          "frontend/src/components/landing/Header.tsx",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/components/admin/AdminPanel.tsx",
+          "frontend/src/components/admin/AdminSetupDialog.tsx",
+          "frontend/src/components/admin/AdminAccessDenied.tsx",
+          "frontend/src/hooks/useInternetIdentity.ts"
         ],
         "matchedFiles": [
-          "frontend/src/content/siteCopy.ts"
+          "frontend/src/components/landing/Header.tsx",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/components/admin/AdminPanel.tsx",
+          "frontend/src/components/admin/AdminSetupDialog.tsx"
         ]
       },
       {
-        "id": "REQ-13",
-        "summary": "Update the \"Talk to Sales\" button behavior so it opens the user’s Discord invite link https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
+        "id": "REQ-26",
+        "summary": "Implement a reliable, explicit “do any admins exist” check in the Motoko backend and update the frontend to use it so that admin bootstrap and Admin button visibility cannot regress due to heuristic client-side logic.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/landing/Header.tsx",
+          "frontend/src/pages/LandingPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/landing/Header.tsx",
+          "frontend/src/pages/LandingPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-27",
+        "summary": "Restore/implement website-based admin allowlist management (Version 7 parity): provide an admin UI to view the current admin list and add/remove admin principals, persisted and enforced by the backend (admin-only write; safe read access as appropriate).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/admin/AdminsAdminPanel.tsx",
+          "frontend/src/components/admin/AdminPanel.tsx",
+          "frontend/src/pages/LandingPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/admin/AdminsAdminPanel.tsx",
+          "frontend/src/components/admin/AdminPanel.tsx",
+          "frontend/src/pages/LandingPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-28",
+        "summary": "Rename the site-wide “Talk to Sales” label to “Purchase Plans” while keeping the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/content/siteCopy.ts",
+          "frontend/src/utils/siteSettings.ts",
           "frontend/src/components/landing/Sections.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/content/siteCopy.ts",
           "frontend/src/components/landing/Sections.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/admin/AdminPanel.tsx",
+    "frontend/src/components/admin/AdminSetupDialog.tsx",
+    "frontend/src/components/admin/AdminsAdminPanel.tsx",
+    "frontend/src/components/landing/Header.tsx",
     "frontend/src/components/landing/Sections.tsx",
     "frontend/src/content/siteCopy.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/LandingPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

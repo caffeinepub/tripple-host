@@ -1,56 +1,93 @@
 {
   "kind": "build_request",
-  "title": "Rename primary CTA to PLANS and make Talk to Sales open Discord invite",
-  "priority": "normal",
+  "title": "Restore Version 7 functionality into current Version 8 (admin access, bootstrap, allowlist management, and CTA label parity)",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-12",
-      "text": "Rename every visible CTA label that currently displays \"Start Free Trial\" to \"PLANS\" using the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth.",
-      "target": "frontend",
+      "id": "REQ-25",
+      "text": "Restore all end-user and admin-facing functionality that existed in Version 7 but is missing or broken in the current Version 8 build, prioritizing the admin entry/access experience so admins can again manage pricing plans, site content customization, and logo uploads from the website UI.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "I want that rename start free trial to PLANS"
+          "Add all things that are in version 7"
         ]
       },
       "acceptanceCriteria": [
-        "In the hero section, the primary CTA button label displays exactly \"PLANS\".",
-        "In the final CTA section (Contact section), the primary CTA button label displays exactly \"PLANS\".",
-        "No other UI element still displays the exact text \"Start Free Trial\" after the change.",
-        "The updated labels come from frontend/src/content/siteCopy.ts (not hardcoded in components)."
+        "When signed in as an admin principal, the Header shows an Admin entry point and the Admin Panel opens successfully.",
+        "When signed in and no admins exist yet, the UI offers the Admin Setup flow and successfully transitions the user into an admin state after claiming the first admin role.",
+        "The Admin Panel includes working management areas for (1) pricing plans CRUD, (2) site content customization, and (3) logo upload/replace, with clear English success/error states.",
+        "Non-admin signed-in users can still access the non-admin user login experience (visible logged-in state + profile create/update) without being blocked by admin logic.",
+        "If a signed-in non-admin attempts to access admin functionality, the AdminAccessDenied UI appears with a clear English explanation (including guidance to contact an administrator if admins already exist)."
       ]
     },
     {
-      "id": "REQ-13",
-      "text": "Update the \"Talk to Sales\" button behavior so it opens the user’s Discord invite link https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
-      "target": "frontend",
+      "id": "REQ-26",
+      "text": "Implement a reliable, explicit “do any admins exist” check in the Motoko backend and update the frontend to use it so that admin bootstrap and Admin button visibility cannot regress due to heuristic client-side logic.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Add function of talk to sales is that it opens my discord",
-          "The link of my discord is  https://discord.gg/NMcBdXYVFe"
+          "Add all things that are in version 7"
         ]
       },
       "acceptanceCriteria": [
-        "Clicking the \"Talk to Sales\" button opens https://discord.gg/NMcBdXYVFe in a new tab/window.",
-        "The \"Talk to Sales\" button remains visible and retains its current styling/variant (outline) and label text.",
-        "The implementation uses safe external-link handling (e.g., includes noopener/noreferrer if using window.open or an anchor tag)."
+        "Backend exposes a public query that returns whether at least one admin exists (e.g., `adminsExist : async Bool`), without requiring caller to be admin.",
+        "frontend/src/hooks/useQueries.ts `useCheckAdminsExist` uses the new backend query instead of the current heuristic/proxy approach.",
+        "Header logic shows “Set up admin access” only when the backend indicates no admins exist, and shows “Admin” only when the caller is an admin, with no false negatives caused by loading/identity state.",
+        "The live app no longer silently hides admin capabilities due to an incorrect `adminsExist` value."
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "text": "Restore/implement website-based admin allowlist management (Version 7 parity): provide an admin UI to view the current admin list and add/remove admin principals, persisted and enforced by the backend (admin-only write; safe read access as appropriate).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Add all things that are in version 7"
+        ]
+      },
+      "acceptanceCriteria": [
+        "An admin can open the Admin Panel and access an “Admins” (or equivalent) management section.",
+        "The admin UI supports adding an admin principal and removing an admin principal, with basic validation and clear English success/error messages.",
+        "Changes persist in the backend and immediately affect authorization (a newly added admin sees the Admin button after refresh/relogin; a removed admin loses admin-only capabilities).",
+        "Non-admin users cannot modify the admin list; backend rejects such attempts with a clear unauthorized error."
+      ]
+    },
+    {
+      "id": "REQ-28",
+      "text": "Rename the site-wide “Talk to Sales” label to “Purchase Plans” while keeping the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Add all things that are in version 7"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All user-visible occurrences of the “Talk to Sales” label are changed to “Purchase Plans” in English.",
+        "Clicking “Purchase Plans” still opens https://discord.gg/NMcBdXYVFe in a new browser tab (no behavior regression).",
+        "Any centralized copy/config (e.g., frontend/src/content/siteCopy.ts and/or backend settings where applicable) remains the single source of truth for the label."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (read-only).",
-    "Keep all user-facing text in English.",
-    "Use frontend/src/content/siteCopy.ts as the centralized place for landing-page copy updates."
+    "Backend must remain a single Motoko actor in backend/main.mo (no additional backend services).",
+    "Do not modify frontend files under the immutable paths listed in SYSTEM_CONTEXT (compose them instead).",
+    "All user-facing text must be in English."
   ],
   "nonGoals": [
-    "Add Discord login or any Discord OAuth authentication.",
-    "Change pricing plan backend/admin functionality.",
-    "Change the site visual theme, layout structure, or section order beyond the requested button label and click behavior."
+    "Adding new product features beyond restoring Version 7 functionality (no new sections or unrelated capabilities).",
+    "Introducing third-party authentication beyond Internet Identity."
   ],
   "imageRequirements": {
     "required": [],

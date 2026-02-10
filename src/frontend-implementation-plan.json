@@ -1,38 +1,133 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update landing-page CTAs: rename to PLANS and link Talk to Sales to Discord",
+  "title": "Restore V7 parity in V8 admin bootstrap, allowlist management, and CTA label",
   "requirements": [
     {
-      "id": "REQ-12",
-      "summary": "Rename all visible \"Start Free Trial\" CTA labels to \"PLANS\" using siteCopy as the single source of truth.",
+      "id": "REQ-25",
+      "summary": "Restore missing/broken Version 7 admin entry/bootstrap and Admin Panel UX while keeping non-admin signed-in profile flows working and showing clear access-denied states.",
       "acceptanceCriteria": [
-        "In the hero section, the primary CTA button label displays exactly \"PLANS\".",
-        "In the final CTA section (Contact section), the primary CTA button label displays exactly \"PLANS\".",
-        "No other UI element still displays the exact text \"Start Free Trial\" after the change.",
-        "The updated labels come from frontend/src/content/siteCopy.ts (not hardcoded in components)."
+        "When signed in as an admin principal, the Header shows an Admin entry point and the Admin Panel opens successfully.",
+        "When signed in and no admins exist yet, the UI offers the Admin Setup flow and successfully transitions the user into an admin state after claiming the first admin role.",
+        "The Admin Panel includes working management areas for (1) pricing plans CRUD, (2) site content customization, and (3) logo upload/replace, with clear English success/error states.",
+        "Non-admin signed-in users can still access the non-admin user login experience (visible logged-in state + profile create/update) without being blocked by admin logic.",
+        "If a signed-in non-admin attempts to access admin functionality, the AdminAccessDenied UI appears with a clear English explanation (including guidance to contact an administrator if admins already exist)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/landing/Header.tsx",
+          "operation": "modify",
+          "description": "Stabilize admin entry visibility and admin setup entry based on explicit admin role + explicit admins-exist query results; ensure the admin setup button does not flash incorrectly during loading/identity transitions. Use shadcn-ui Button/Sheet patterns already in use for consistent UI. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Ensure Admin Panel open/close logic and AdminAccessDenied rendering are driven by reliable admin checks and do not interfere with the signed-in user profile dialogs; keep the public landing experience unchanged. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/admin/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Confirm Admin Panel tab wiring remains functional for pricing plans, website content customization, and logo management; add any missing success/error presentation consistency using existing shadcn-ui Tabs and layout. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/admin/AdminSetupDialog.tsx",
+          "operation": "modify",
+          "description": "Harden the first-admin claim UX: clear English error mapping for already-claimed/unauthorized states and ensure post-success UI refresh (Admin button appears) without requiring confusing manual steps. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/admin/AdminAccessDenied.tsx",
+          "operation": "modify",
+          "description": "Ensure access denied messaging remains clear, English-only, and correctly branches based on adminsExist (contact an administrator vs. instruct how to set up admin access). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Ensure logout continues to clear cached application data so admin-only UI state does not persist across sessions (role-based access control per the authorization component expectations). Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-26",
+      "summary": "Replace heuristic admins-exist detection with an explicit backend-provided admins-exist query and update dependent UI logic to prevent regressions.",
+      "acceptanceCriteria": [
+        "Backend exposes a public query that returns whether at least one admin exists (e.g., `adminsExist : async Bool`), without requiring caller to be admin.",
+        "frontend/src/hooks/useQueries.ts `useCheckAdminsExist` uses the new backend query instead of the current heuristic/proxy approach.",
+        "Header logic shows “Set up admin access” only when the backend indicates no admins exist, and shows “Admin” only when the caller is an admin, with no false negatives caused by loading/identity state.",
+        "The live app no longer silently hides admin capabilities due to an incorrect `adminsExist` value."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update useCheckAdminsExist to call the explicit backend capability (backendInterface.doesAdminExist) and return robust loading/fetched states; remove the current role/heuristic proxy logic. Keep behavior safe during actor initialization (avoid false negatives). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/landing/Header.tsx",
+          "operation": "modify",
+          "description": "Update header admin/setup button gating to rely on the revised useCheckAdminsExist and useIsCallerAdmin query states, avoiding incorrect hidden admin capabilities during loading/identity transitions. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Ensure adminsExist passed into AdminAccessDenied is sourced from the explicit backend query (via hook) and reflects loading defaults safely. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "summary": "Restore Version 7 parity for website-based admin allowlist management: view current admins and add/remove admin principals from the Admin Panel UI.",
+      "acceptanceCriteria": [
+        "An admin can open the Admin Panel and access an “Admins” (or equivalent) management section.",
+        "The admin UI supports adding an admin principal and removing an admin principal, with basic validation and clear English success/error messages.",
+        "Changes persist in the backend and immediately affect authorization (a newly added admin sees the Admin button after refresh/relogin; a removed admin loses admin-only capabilities).",
+        "Non-admin users cannot modify the admin list; backend rejects such attempts with a clear unauthorized error."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add React Query hooks for admin allowlist management using existing backend capabilities: fetch admin list, add admin, remove admin; ensure unauthorized errors are mapped to clear English messages. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/admin/AdminsAdminPanel.tsx",
+          "operation": "create",
+          "description": "Create an Admins management panel UI: list current admin principals, provide an input to add a principal, and provide remove actions with confirmation and clear success/error states. Use shadcn-ui primitives (Card, Button, Input, Alert, Dialog) for consistent UX. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/admin/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Wire the new AdminsAdminPanel into the Admin Panel as an additional tab/section (e.g., “Admins”), ensuring it is reachable from the existing Admin entry point and not an orphan component. Use shadcn-ui Tabs patterns already in use. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Confirm the Admin Panel gating remains admin-only; non-admin users attempting to open the admin UI still see AdminAccessDenied, which indirectly prevents access to the Admins management UI. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-28",
+      "summary": "Rename all “Talk to Sales” labels to “Purchase Plans” while keeping behavior to open the Discord invite link in a new tab.",
+      "acceptanceCriteria": [
+        "All user-visible occurrences of the “Talk to Sales” label are changed to “Purchase Plans” in English.",
+        "Clicking “Purchase Plans” still opens https://discord.gg/NMcBdXYVFe in a new browser tab (no behavior regression).",
+        "Any centralized copy/config (e.g., frontend/src/content/siteCopy.ts and/or backend settings where applicable) remains the single source of truth for the label."
       ],
       "file_operations": [
         {
           "path": "frontend/src/content/siteCopy.ts",
           "operation": "modify",
-          "description": "Update siteCopy.hero.primaryCTA and siteCopy.finalCTA.primaryCTA from \"Start Free Trial\" to \"PLANS\" so all consuming components render the new label from centralized copy (no hardcoded replacements)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "summary": "Make the \"Talk to Sales\" button open the provided Discord invite in a new tab with safe external-link handling.",
-      "acceptanceCriteria": [
-        "Clicking the \"Talk to Sales\" button opens https://discord.gg/NMcBdXYVFe in a new tab/window.",
-        "The \"Talk to Sales\" button remains visible and retains its current styling/variant (outline) and label text.",
-        "The implementation uses safe external-link handling (e.g., includes noopener/noreferrer if using window.open or an anchor tag)."
-      ],
-      "file_operations": [
+          "description": "Update centralized English copy so any remaining “Talk to Sales” user-facing label becomes “Purchase Plans”, maintaining copy as a single source of truth. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/siteSettings.ts",
+          "operation": "modify",
+          "description": "Ensure default/merged settings for CTA label and link align with the new wording (“Purchase Plans”) and the required Discord URL, so configured settings remain the single source of truth where used. Verify the component's usage instructions before implementing."
+        },
         {
           "path": "frontend/src/components/landing/Sections.tsx",
           "operation": "modify",
-          "description": "Update the FinalCTA \"Talk to Sales\" control to navigate to https://discord.gg/NMcBdXYVFe in a new tab using safe external-link handling (target=\"_blank\" plus rel=\"noopener noreferrer\"). Use the existing shadcn-ui Button component (outline variant) to preserve styling (e.g., via Button's anchor rendering pattern). Verify the component's usage instructions before implementing."
+          "description": "Update the FinalCTA secondary button to display “Purchase Plans” (from centralized copy/config) and open https://discord.gg/NMcBdXYVFe in a new tab with noopener/noreferrer; remove the incorrect hardcoded invite link to prevent regressions. Verify the component's usage instructions before implementing."
         }
       ]
     }

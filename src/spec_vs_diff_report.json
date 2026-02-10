@@ -1,34 +1,60 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T06:28:05.293Z",
-  "summary": "REQ-12 appears partially implemented by updating the hero primary CTA copy to \"PLANS\" in the centralized siteCopy.ts, but the diff does not provide evidence that the final CTA (contact section) label and all remaining \"Start Free Trial\" occurrences were updated via siteCopy. REQ-13 is described as implemented (Talk to Sales opens the Discord invite in a new tab with safe handling) in the provided file summary, but the actual code change is not visible in the truncated Sections.tsx snippet.",
+  "generatedAt": "2026-02-10T08:29:08.312Z",
+  "summary": "Diff adds an Admins management tab/UI, an admin setup dialog, updates header/admin gating to use an explicit admins-exist query hook, and includes various admin-related hooks and backend state changes. One key requested copy change (“Talk to Sales” → “Purchase Plans”) is not clearly evidenced in the provided diffs, and some backend endpoints required by the new frontend hooks are not directly evidenced in the truncated backend diff.",
   "missing_requirements": [
     {
-      "id": "REQ-12",
-      "requirement": "In the final CTA section (Contact section), the primary CTA button label displays exactly \"PLANS\" and comes from frontend/src/content/siteCopy.ts (not hardcoded).",
-      "reason": "frontend/src/content/siteCopy.ts shows hero.primaryCTA set to \"PLANS\", but the diff snippet is truncated before any finalCTA/contact-section copy, and Sections.tsx is truncated before the FinalCTA section rendering. No direct evidence that final CTA label was updated to \"PLANS\" via siteCopy.",
+      "id": "REQ-28",
+      "requirement": "Rename the site-wide “Talk to Sales” label to “Purchase Plans” while keeping the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
+      "reason": "In the shown changes, the centralized copy does not visibly contain “Purchase Plans”; the hero primary CTA is shown as “PLANS”, and the provided truncations do not show the actual CTA label rendering or the Discord link behavior.",
       "evidence": [
-        "frontend/src/content/siteCopy.ts (truncated)",
-        "frontend/src/components/landing/Sections.tsx (truncated)"
+        "frontend/src/content/siteCopy.ts",
+        "frontend/src/components/landing/Sections.tsx (truncated)",
+        "frontend-file-summaries.txt (claims behavior but not shown in code snippets)"
       ]
     },
     {
-      "id": "REQ-12",
-      "requirement": "No other UI element still displays the exact text \"Start Free Trial\" after the change, with labels sourced from frontend/src/content/siteCopy.ts.",
-      "reason": "The diff summary only shows one explicit change to hero.primaryCTA in siteCopy.ts; it does not show a comprehensive removal/update of all \"Start Free Trial\" strings across the UI, and content is truncated so remaining occurrences cannot be ruled out.",
+      "id": "REQ-26",
+      "requirement": "Backend exposes a public query that returns whether at least one admin exists (e.g., adminsExist : async Bool), without requiring caller to be admin.",
+      "reason": "Frontend was updated to call `actor.doesAdminExist()`, but the truncated backend diff does not show an implemented public query method with that name/signature (or equivalent) in backend/main.mo.",
       "evidence": [
-        "frontend/src/content/siteCopy.ts (truncated)",
-        "frontend/src/components/landing/Sections.tsx (truncated)"
+        "frontend/src/hooks/useQueries.ts",
+        "backend/main.mo (truncated; no visible doesAdminExist/adminsExist query)"
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "requirement": "Persisted/enforced backend allowlist management (admin-only write; safe read access as appropriate) including view/add/remove admin principals.",
+      "reason": "Frontend adds UI and hooks calling `actor.getAdminList()`, `actor.addAdmin(...)`, and `actor.removeAdmin(...)`, but the truncated backend diff does not show these corresponding backend methods implemented and enforced.",
+      "evidence": [
+        "frontend/src/components/admin/AdminsAdminPanel.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "backend/main.mo (truncated; no visible getAdminList/addAdmin/removeAdmin methods)"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.56,
+  "hallucinated_features": [
+    {
+      "description": "Admin list convenience feature to copy principals to clipboard (copy button/state).",
+      "reason": "Not requested by the BuildRequest/AC; it is an extra UX capability beyond restoring required parity.",
+      "evidence": [
+        "frontend/src/components/admin/AdminsAdminPanel.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.62,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/components/admin/AdminPanel.tsx",
+    "frontend/src/components/admin/AdminSetupDialog.tsx",
+    "frontend/src/components/admin/AdminsAdminPanel.tsx",
+    "frontend/src/components/landing/Header.tsx",
     "frontend/src/components/landing/Sections.tsx",
     "frontend/src/content/siteCopy.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/LandingPage.tsx",
     "project_state.json"
   ]
 }

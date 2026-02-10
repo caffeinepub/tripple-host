@@ -1,10 +1,12 @@
-import { Check, Server, Zap, Shield, Globe, Users, Clock, HeadphonesIcon } from 'lucide-react';
+import { Check, Server, Zap, Shield, Globe, Users, Clock, HeadphonesIcon, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { siteCopy } from '../../content/siteCopy';
-import { useGetAllPricingPlans } from '../../hooks/useQueries';
+import { useGetAllPricingPlans, useGetSiteSettings } from '../../hooks/useQueries';
+import { mergeSiteSettings } from '../../utils/siteSettings';
 import ScrollReveal from './ScrollReveal';
 
 export function Stats() {
@@ -27,6 +29,9 @@ export function Stats() {
 }
 
 export function Features() {
+  const { data: backendSettings } = useGetSiteSettings();
+  const settings = mergeSiteSettings(backendSettings);
+
   const iconMap = {
     server: Server,
     zap: Zap,
@@ -41,8 +46,8 @@ export function Features() {
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">{siteCopy.features.title}</h2>
-            <p className="text-lg text-muted-foreground">{siteCopy.features.subtitle}</p>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">{settings.featuresTitle}</h2>
+            <p className="text-lg text-muted-foreground">{settings.featuresSubtitle}</p>
           </div>
         </ScrollReveal>
 
@@ -124,59 +129,64 @@ export function Pricing() {
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-            {plans.map((plan, index) => (
-              <ScrollReveal key={index} delay={index * 0.1}>
-                <Card
-                  className={`h-full flex flex-col ${
-                    plan.popular
-                      ? 'border-primary shadow-xl scale-105 relative'
-                      : 'border-border/50 hover:border-border transition-colors'
-                  }`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
-                      Most Popular
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                    <CardDescription className="text-base">{plan.description}</CardDescription>
-                    <div className="mt-4">
-                      <span className="text-4xl font-bold">{plan.price}</span>
-                      {plan.period && <span className="text-muted-foreground ml-2">{plan.period}</span>}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, fIndex) => (
-                        <li key={fIndex} className="flex items-start space-x-3">
-                          <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      onClick={() => scrollToSection('contact')}
-                      variant={plan.popular ? 'default' : 'outline'}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {plan.cta}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-        )}
+          <>
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+              {plans.map((plan, index) => (
+                <ScrollReveal key={index} delay={index * 0.1}>
+                  <Card
+                    className={`h-full flex flex-col ${
+                      plan.popular
+                        ? 'border-primary shadow-xl scale-105 relative'
+                        : 'border-border/50 hover:border-border transition-colors'
+                    }`}
+                  >
+                    {plan.popular && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
+                        Most Popular
+                      </div>
+                    )}
+                    <CardHeader>
+                      <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                      <CardDescription className="text-base">{plan.description}</CardDescription>
+                      <div className="mt-4">
+                        <span className="text-4xl font-bold">{plan.price}</span>
+                        {plan.period && <span className="text-muted-foreground ml-2">{plan.period}</span>}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                      <ul className="space-y-3">
+                        {plan.features.map((feature, fIndex) => (
+                          <li key={fIndex} className="flex items-start space-x-3">
+                            <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                            <span className="text-sm">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        onClick={() => scrollToSection('contact')}
+                        variant={plan.popular ? 'default' : 'outline'}
+                        className="w-full"
+                        size="lg"
+                      >
+                        {plan.cta}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </ScrollReveal>
+              ))}
+            </div>
 
-        {isError && (
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Showing default pricing plans
-          </p>
+            <ScrollReveal delay={0.3}>
+              <Alert className="max-w-4xl mx-auto mt-8 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
+                <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <AlertDescription className="text-amber-800 dark:text-amber-200">
+                  {siteCopy.pricing.disclaimer}
+                </AlertDescription>
+              </Alert>
+            </ScrollReveal>
+          </>
         )}
       </div>
     </section>
@@ -184,13 +194,16 @@ export function Pricing() {
 }
 
 export function FAQ() {
+  const { data: backendSettings } = useGetSiteSettings();
+  const settings = mergeSiteSettings(backendSettings);
+
   return (
     <section id="faq" className="py-16 md:py-24">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">{siteCopy.faq.title}</h2>
-            <p className="text-lg text-muted-foreground">{siteCopy.faq.subtitle}</p>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">{settings.faqTitle}</h2>
+            <p className="text-lg text-muted-foreground">{settings.faqSubtitle}</p>
           </div>
         </ScrollReveal>
 
@@ -203,10 +216,12 @@ export function FAQ() {
                   value={`item-${index}`}
                   className="border border-border rounded-lg px-6 bg-card"
                 >
-                  <AccordionTrigger className="text-left font-semibold hover:no-underline py-4">
-                    {item.question}
+                  <AccordionTrigger className="text-left hover:no-underline py-4">
+                    <span className="font-semibold">{item.question}</span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-4">{item.answer}</AccordionContent>
+                  <AccordionContent className="text-muted-foreground pb-4">
+                    {item.answer}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -225,28 +240,30 @@ export function FinalCTA() {
     }
   };
 
-  const handleTalkToSales = () => {
-    window.open('https://discord.gg/NMcBdXYVFe', '_blank', 'noopener,noreferrer');
-  };
-
   return (
-    <section id="contact" className="py-16 md:py-24 bg-gradient-to-br from-primary/10 via-accent/20 to-primary/5">
+    <section id="contact" className="py-16 md:py-24 bg-gradient-to-br from-primary/5 via-accent/10 to-primary/5">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center space-x-2 bg-primary/10 px-4 py-2 rounded-full mb-6">
-              <HeadphonesIcon className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{siteCopy.finalCTA.badge}</span>
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <HeadphonesIcon className="h-4 w-4" />
+              {siteCopy.finalCTA.badge}
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-6">{siteCopy.finalCTA.title}</h2>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {siteCopy.finalCTA.subtitle}
+            <p className="text-lg text-muted-foreground mb-4">{siteCopy.finalCTA.subtitle}</p>
+            <p className="text-sm text-amber-600 dark:text-amber-400 mb-8 font-medium">
+              {siteCopy.finalCTA.noRefundReminder}
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button onClick={() => scrollToSection('pricing')} size="lg" className="text-base px-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button onClick={() => scrollToSection('pricing')} size="lg" className="text-lg px-8 py-6">
                 {siteCopy.finalCTA.primaryCTA}
               </Button>
-              <Button onClick={handleTalkToSales} variant="outline" size="lg" className="text-base px-8">
+              <Button
+                onClick={() => window.open('https://discord.gg/NMcBdXYVFe', '_blank', 'noopener,noreferrer')}
+                variant="outline"
+                size="lg"
+                className="text-lg px-8 py-6"
+              >
                 {siteCopy.finalCTA.secondaryCTA}
               </Button>
             </div>

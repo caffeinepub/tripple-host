@@ -72,6 +72,7 @@ export const siteCopy = {
   pricing: {
     title: 'Simple, Transparent Pricing',
     subtitle: 'Choose the perfect plan for your needs. All plans include our core features.',
+    disclaimer: 'All purchases are final and non-refundable. Please choose your plan carefully.',
     plans: [
       {
         name: 'Starter',
@@ -132,7 +133,7 @@ export const siteCopy = {
       {
         question: 'Do you offer refunds?',
         answer:
-          'Yes, we offer a 30-day money-back guarantee. If you\'re not satisfied with our service, we\'ll refund your payment, no questions asked.',
+          'All purchases are final and non-refundable. We encourage you to carefully review the plan details and reach out to our support team if you have any questions before purchasing.',
       },
       {
         question: 'Where are your servers located?',
@@ -150,9 +151,10 @@ export const siteCopy = {
     badge: '24/7 Support Available',
     title: 'Ready to Experience the Difference?',
     subtitle:
-      'Join thousands of developers and businesses who trust tripple host for their hosting needs. Start your free trial today.',
+      'Join thousands of developers and businesses who trust tripple host for their hosting needs. Get started today.',
+    noRefundReminder: 'Please note: All purchases are final and non-refundable.',
     primaryCTA: 'PLANS',
-    secondaryCTA: 'Talk to Sales',
+    secondaryCTA: 'Purchase Plans',
   },
   footer: {
     tagline: 'Premium hosting solutions built for performance and reliability.',
