@@ -2,12 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-an-admin-access-option-in-the-frontend-header-using-internet-identity-login-logout-controls-and-show-an-admin-entry-point-only-when-the-logged-in-principal-is-an-admin",
-      "featureTitle": "Add an admin access option in the frontend header using Internet Identity login/logout controls, and show an Admin entry point only when the logged-in principal is an admin.",
+      "featureId": "feature-rename-every-visible-cta-label-that-currently-displays-start-free-trial-to-plans-using-the-centralized-copy-config-frontend-src-content-sitecopy-ts-as-the-single-source-of-truth",
+      "featureTitle": "Rename every visible CTA label that currently displays \"Start Free Trial\" to \"PLANS\" using the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth.",
       "files": [
-        "frontend/src/components/landing/Header.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/LandingPage.tsx"
+        "frontend/src/content/siteCopy.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -18,17 +16,15 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-9"
+        "REQ-12"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-an-admin-ui-that-allows-admins-to-add-edit-and-delete-pricing-plans-and-persist-changes-via-the-backend-include-basic-validation-and-clear-success-error-states-in-english",
-      "featureTitle": "Create an admin UI that allows admins to add, edit, and delete pricing plans, and persist changes via the backend; include basic validation and clear success/error states in English.",
+      "featureId": "feature-update-the-talk-to-sales-button-behavior-so-it-opens-the-user-s-discord-invite-link-https-discord-gg-nmcbdxyvfe-in-a-new-browser-tab-when-clicked",
+      "featureTitle": "Update the \"Talk to Sales\" button behavior so it opens the user’s Discord invite link https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
       "files": [
-        "frontend/src/components/admin/PricingPlansAdminPanel.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/LandingPage.tsx"
+        "frontend/src/components/landing/Sections.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -39,27 +35,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-10"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-landing-pricing-section-to-render-pricing-plans-from-backend-data-with-a-safe-fallback-keeping-the-existing-card-layout-and-interactions",
-      "featureTitle": "Update the landing Pricing section to render pricing plans from backend data (with a safe fallback), keeping the existing card layout and interactions.",
-      "files": [
-        "frontend/src/components/landing/Sections.tsx",
-        "frontend/src/hooks/useQueries.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-11"
+        "REQ-13"
       ],
       "confidence": "high"
     }

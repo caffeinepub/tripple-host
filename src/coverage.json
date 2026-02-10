@@ -1,96 +1,46 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T06:14:25.123Z",
+  "generatedAt": "2026-02-10T06:28:05.295Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 3,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-10",
-        "summary": "Create an admin UI that allows admins to add, edit, and delete pricing plans, and persist changes via the backend; include basic validation and clear success/error states in English.",
+        "id": "REQ-12",
+        "summary": "Rename every visible CTA label that currently displays \"Start Free Trial\" to \"PLANS\" using the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/PricingPlansAdminPanel.tsx",
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/src/content/siteCopy.ts"
         ],
         "matchedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/PricingPlansAdminPanel.tsx",
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/src/content/siteCopy.ts"
         ]
       },
       {
-        "id": "REQ-11",
-        "summary": "Update the landing Pricing section to render pricing plans from backend data (with a safe fallback), keeping the existing card layout and interactions.",
+        "id": "REQ-13",
+        "summary": "Update the \"Talk to Sales\" button behavior so it opens the user’s Discord invite link https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
           "frontend/src/components/landing/Sections.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
           "frontend/src/components/landing/Sections.tsx"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Implement admin authorization in the Motoko backend using Internet Identity principals, including a bootstrap mechanism to establish the first admin and a way for admins to manage the admin allowlist.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Move pricing plan data to backend-managed state and expose public read access plus admin CRUD operations so pricing plans can be added/updated/removed without editing frontend code.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Add an admin access option in the frontend header using Internet Identity login/logout controls, and show an Admin entry point only when the logged-in principal is an admin.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/landing/Header.tsx",
-          "frontend/src/pages/LandingPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/landing/Header.tsx",
-          "frontend/src/pages/LandingPage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
-    "backend/main.mo",
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/admin/PricingPlansAdminPanel.tsx",
-    "frontend/src/components/landing/Header.tsx",
     "frontend/src/components/landing/Sections.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/LandingPage.tsx",
-    "frontend/src/utils/urlParams.ts",
+    "frontend/src/content/siteCopy.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

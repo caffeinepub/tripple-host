@@ -225,6 +225,10 @@ export function FinalCTA() {
     }
   };
 
+  const handleTalkToSales = () => {
+    window.open('https://discord.gg/NMcBdXYVFe', '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <section id="contact" className="py-16 md:py-24 bg-gradient-to-br from-primary/10 via-accent/20 to-primary/5">
       <div className="container mx-auto px-4">
@@ -242,7 +246,7 @@ export function FinalCTA() {
               <Button onClick={() => scrollToSection('pricing')} size="lg" className="text-base px-8">
                 {siteCopy.finalCTA.primaryCTA}
               </Button>
-              <Button variant="outline" size="lg" className="text-base px-8">
+              <Button onClick={handleTalkToSales} variant="outline" size="lg" className="text-base px-8">
                 {siteCopy.finalCTA.secondaryCTA}
               </Button>
             </div>

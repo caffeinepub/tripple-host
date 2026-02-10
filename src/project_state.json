@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 9,
   "summary": "Create a website similar to https://stranger-nodes-55e.caffeine.xyz/ named \"tripple host\".",
   "architectural_notes": [
     "Add authenticated admin interface to edit site content and manage pricing plans (create/update/delete), rather than hardcoded-only plans."
@@ -79,6 +79,22 @@
         "REQ-11"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-rename-every-visible-cta-label-that-currently-displays-start-free-trial-to-plans-using-the-centralized-copy-config-frontend-src-content-sitecopy-ts-as-the-single-source-of-truth",
+      "title": "Rename every visible CTA label that currently displays \"Start Free Trial\" to \"PLANS\" using the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-talk-to-sales-button-behavior-so-it-opens-the-user-s-discord-invite-link-https-discord-gg-nmcbdxyvfe-in-a-new-browser-tab-when-clicked",
+      "title": "Update the \"Talk to Sales\" button behavior so it opens the user’s Discord invite link https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -114,6 +130,18 @@
       "reqIds": [
         "REQ-8"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Rename the \"Start Free Trial\" CTA label to \"PLANS\" on the Tripple Host website.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Update the \"Talk to Sales\" button behavior to open the user's Discord invite link (https://discord.gg/NMcBdXYVFe).",
+      "reqIds": [],
       "status": "pending"
     }
   ],

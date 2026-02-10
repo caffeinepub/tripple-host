@@ -1,87 +1,34 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T06:14:25.120Z",
-  "summary": "The diff implements pricing plan CRUD in the backend with admin-gated mutations, adds Internet Identity sign-in/out controls and an Admin entry point in the header, adds a pricing-plan admin panel UI, and updates the landing Pricing section to fetch plans from the backend with a fallback. However, several REQ-7/REQ-8/REQ-10/REQ-11 acceptance criteria are not evidenced in the diff (notably: explicit admin status query/bootstrapping/admin allowlist management, backend plan field completeness + initial seed plans, and frontend support for popular/period/CTA fields). The diff also adds an unrequested secret-token based access-control initialization and URL/session parameter utilities.",
+  "generatedAt": "2026-02-10T06:28:05.293Z",
+  "summary": "REQ-12 appears partially implemented by updating the hero primary CTA copy to \"PLANS\" in the centralized siteCopy.ts, but the diff does not provide evidence that the final CTA (contact section) label and all remaining \"Start Free Trial\" occurrences were updated via siteCopy. REQ-13 is described as implemented (Talk to Sales opens the Discord invite in a new tab with safe handling) in the provided file summary, but the actual code change is not visible in the truncated Sections.tsx snippet.",
   "missing_requirements": [
     {
-      "id": "REQ-7",
-      "requirement": "Backend exposes a query method to check whether the caller is an admin.",
-      "reason": "Frontend calls `actor.isCallerAdmin()`, but no `isCallerAdmin` method is shown/added in `backend/main.mo` diff content.",
+      "id": "REQ-12",
+      "requirement": "In the final CTA section (Contact section), the primary CTA button label displays exactly \"PLANS\" and comes from frontend/src/content/siteCopy.ts (not hardcoded).",
+      "reason": "frontend/src/content/siteCopy.ts shows hero.primaryCTA set to \"PLANS\", but the diff snippet is truncated before any finalCTA/contact-section copy, and Sections.tsx is truncated before the FinalCTA section rendering. No direct evidence that final CTA label was updated to \"PLANS\" via siteCopy.",
       "evidence": [
-        "backend/main.mo",
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/content/siteCopy.ts (truncated)",
+        "frontend/src/components/landing/Sections.tsx (truncated)"
       ]
     },
     {
-      "id": "REQ-7",
-      "requirement": "Backend supports a bootstrap flow so that an admin can be established when the admin list is empty, and provides admin-only methods to add/remove admin principals.",
-      "reason": "No bootstrap behavior and no admin allowlist management methods (add/remove admins) are visible in `backend/main.mo` diff content.",
+      "id": "REQ-12",
+      "requirement": "No other UI element still displays the exact text \"Start Free Trial\" after the change, with labels sourced from frontend/src/content/siteCopy.ts.",
+      "reason": "The diff summary only shows one explicit change to hero.primaryCTA in siteCopy.ts; it does not show a comprehensive removal/update of all \"Start Free Trial\" strings across the UI, and content is truncated so remaining occurrences cannot be ruled out.",
       "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "On a fresh deploy, backend initializes pricing plans to match the current two plans in `frontend/src/content/siteCopy.ts` (Starter and Iron).",
-      "reason": "`pricingPlans` is initialized as empty (`Map.empty`) and there is no seeding/initialization logic shown that inserts the two default plans on deploy.",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "Plan fields support at least: name, description, price, period, popular flag, feature list, and CTA label.",
-      "reason": "Backend `PricingPlan` type includes `name`, `description`, `priceCents`, `durationDays`, `features`, but does not include a popular flag, an explicit period field, or a CTA label field.",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "requirement": "Admin UI supports editing all plan fields used by the landing Pricing section (name, description, price, period, popular, features list, CTA).",
-      "reason": "Admin panel form data only includes `name`, `description`, `priceCents`, `durationDays`, `features` and does not show inputs for `popular` or `CTA label` (and no explicit period field beyond duration days).",
-      "evidence": [
-        "frontend/src/components/admin/PricingPlansAdminPanel.tsx"
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "requirement": "Pricing section renders backend plans including existing fields/labels (e.g., Most Popular) while keeping the existing interactions/layout, with safe fallback.",
-      "reason": "Pricing mapping hard-codes `popular: false` and `cta: 'Get Started'` with an inline comment indicating the backend doesn't have the popular flag yet, so the 'Most Popular' behavior/label cannot be driven by backend data as required.",
-      "evidence": [
-        "frontend/src/components/landing/Sections.tsx"
+        "frontend/src/content/siteCopy.ts (truncated)",
+        "frontend/src/components/landing/Sections.tsx (truncated)"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "Secret-token based access-control initialization via URL parameter/session storage (`caffeineAdminToken`) and calling a backend method `_initializeAccessControlWithSecret`.",
-      "reason": "BuildRequest requires Internet Identity principal-based admin authorization with bootstrap/admin allowlist management; it does not request a secret token flow or URL/session parameter persistence for admin access.",
-      "evidence": [
-        "frontend/src/hooks/useActor.ts",
-        "frontend/src/utils/urlParams.ts"
-      ]
-    },
-    {
-      "description": "URL/session parameter utility module for persisting parameters across navigation (including mention of maintaining admin tokens).",
-      "reason": "Not requested by any requirement; the BuildRequest only asks for II authentication and admin UI for pricing plan management.",
-      "evidence": [
-        "frontend/src/utils/urlParams.ts"
-      ]
-    }
-  ],
-  "confidence": 0.74,
+  "hallucinated_features": [],
+  "confidence": 0.56,
   "changed_files": [
-    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/admin/PricingPlansAdminPanel.tsx",
-    "frontend/src/components/landing/Header.tsx",
     "frontend/src/components/landing/Sections.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/LandingPage.tsx",
-    "frontend/src/utils/urlParams.ts",
+    "frontend/src/content/siteCopy.ts",
     "project_state.json"
   ]
 }

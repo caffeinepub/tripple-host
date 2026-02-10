@@ -1,85 +1,38 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Frontend admin access + admin pricing plan management UI",
+  "title": "Update landing-page CTAs: rename to PLANS and link Talk to Sales to Discord",
   "requirements": [
     {
-      "id": "REQ-9",
-      "summary": "Add Internet Identity sign in/out controls in the header and conditionally show an Admin entry point only for admins.",
+      "id": "REQ-12",
+      "summary": "Rename all visible \"Start Free Trial\" CTA labels to \"PLANS\" using siteCopy as the single source of truth.",
       "acceptanceCriteria": [
-        "Header displays a “Sign in” button when logged out and a “Sign out” button when logged in (English text).",
-        "When logged in, the UI checks admin status via the backend and only then shows an “Admin” button/link.",
-        "Non-admin users can sign in but do not see admin management UI entry points."
+        "In the hero section, the primary CTA button label displays exactly \"PLANS\".",
+        "In the final CTA section (Contact section), the primary CTA button label displays exactly \"PLANS\".",
+        "No other UI element still displays the exact text \"Start Free Trial\" after the change.",
+        "The updated labels come from frontend/src/content/siteCopy.ts (not hardcoded in components)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/content/siteCopy.ts",
           "operation": "modify",
-          "description": "Implement React Query hooks for admin status (e.g., querying backend isCallerAdmin) using the actor from core-infrastructure's backend connection patterns (useActor)."
-        },
-        {
-          "path": "frontend/src/components/landing/Header.tsx",
-          "operation": "modify",
-          "description": "Add Internet Identity login/logout controls using the authorization component guidance (useInternetIdentity) and clear React Query cache on logout; query admin status via a new hook and render an “Admin” entry point only when authenticated and admin. Use shadcn-ui Button/Sheet where appropriate; Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/pages/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Wire the header’s Admin entry point to open the admin pricing UI (e.g., via local state and passing callbacks/flags), ensuring the admin UI has a navigable entry point and is not orphaned."
+          "description": "Update siteCopy.hero.primaryCTA and siteCopy.finalCTA.primaryCTA from \"Start Free Trial\" to \"PLANS\" so all consuming components render the new label from centralized copy (no hardcoded replacements)."
         }
       ]
     },
     {
-      "id": "REQ-10",
-      "summary": "Create an admin pricing plan management UI (add/edit/delete) with validation and success/error states, persisting changes via backend and refreshing pricing data.",
+      "id": "REQ-13",
+      "summary": "Make the \"Talk to Sales\" button open the provided Discord invite in a new tab with safe external-link handling.",
       "acceptanceCriteria": [
-        "Admin UI provides a form to add a new plan and an interface to edit/delete existing plans.",
-        "Admin UI supports editing all plan fields used by the landing Pricing section (name, description, price, period, popular, features list, CTA).",
-        "UI prevents saving obviously invalid data (e.g., empty name/price) and shows errors in English when backend rejects a request.",
-        "After a successful change, the landing pricing display reflects the updated plans without a hard refresh (React Query invalidation/refetch or equivalent)."
+        "Clicking the \"Talk to Sales\" button opens https://discord.gg/NMcBdXYVFe in a new tab/window.",
+        "The \"Talk to Sales\" button remains visible and retains its current styling/variant (outline) and label text.",
+        "The implementation uses safe external-link handling (e.g., includes noopener/noreferrer if using window.open or an anchor tag)."
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/backend.d.ts",
-          "operation": "modify",
-          "description": "Align frontend backend type definitions for pricing plans with the required UI fields (add any newly-supported plan fields such as popular flag, CTA label, and period text/duration mapping) so the admin UI can edit all fields used by the Pricing section."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query mutations for creating/updating/deleting pricing plans and ensure they invalidate/refetch the pricing plans query on success (and expose useful error state for English error messaging)."
-        },
-        {
-          "path": "frontend/src/components/admin/PricingPlansAdminPanel.tsx",
-          "operation": "create",
-          "description": "Create an admin-only pricing plan management panel with add/edit/delete UI, basic client-side validation, and clear success/error states in English. Compose existing shadcn-ui primitives (e.g., Button, Card, inputs/dialog primitives if available) rather than editing immutable ui components; Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/pages/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Render the PricingPlansAdminPanel conditionally when the user is authenticated and confirmed as admin (using the admin status hook), and show an English access denied message if a non-admin somehow opens the panel."
-        }
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "summary": "Render landing Pricing section from backend pricing plans with loading state and safe fallback to existing siteCopy plans, preserving current layout and English labels.",
-      "acceptanceCriteria": [
-        "Pricing section fetches plans from the backend and renders them in the existing two-column card layout.",
-        "While loading, the Pricing section shows a sensible loading state (English text) and does not break page layout.",
-        "If backend fetch fails, the Pricing section falls back to the existing siteCopy.pricing.plans so the marketing page remains usable.",
-        "All existing visible labels in the Pricing section remain in English (e.g., “Most Popular”)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add a React Query hook to fetch all pricing plans from the backend actor, including a small adapter to map backend plan fields into the Pricing card view model (price/period formatting, features, popular, CTA label), supporting fallback behavior in the UI."
-        },
         {
           "path": "frontend/src/components/landing/Sections.tsx",
           "operation": "modify",
-          "description": "Update the Pricing section to use the backend plans query while keeping the existing card layout and interactions; show an English loading state; on fetch failure, fall back to siteCopy.pricing.plans; keep English labels such as “Most Popular”."
+          "description": "Update the FinalCTA \"Talk to Sales\" control to navigate to https://discord.gg/NMcBdXYVFe in a new tab using safe external-link handling (target=\"_blank\" plus rel=\"noopener noreferrer\"). Use the existing shadcn-ui Button component (outline variant) to preserve styling (e.g., via Button's anchor rendering pattern). Verify the component's usage instructions before implementing."
         }
       ]
     }

@@ -13,7 +13,7 @@ export const siteCopy = {
     title: 'Premium Hosting Built for Performance',
     subtitle:
       'Experience unmatched speed, reliability, and support with tripple host. Deploy your projects instantly on our cutting-edge infrastructure.',
-    primaryCTA: 'Start Free Trial',
+    primaryCTA: 'PLANS',
     secondaryCTA: 'Explore Features',
     features: [
       { icon: 'shield', text: '99.9% Uptime SLA' },
@@ -151,7 +151,7 @@ export const siteCopy = {
     title: 'Ready to Experience the Difference?',
     subtitle:
       'Join thousands of developers and businesses who trust tripple host for their hosting needs. Start your free trial today.',
-    primaryCTA: 'Start Free Trial',
+    primaryCTA: 'PLANS',
     secondaryCTA: 'Talk to Sales',
   },
   footer: {

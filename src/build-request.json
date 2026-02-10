@@ -1,115 +1,69 @@
 {
   "kind": "build_request",
-  "title": "Add admin access and admin UI to manage pricing plans",
+  "title": "Rename primary CTA to PLANS and make Talk to Sales open Discord invite",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-7",
-      "text": "Implement admin authorization in the Motoko backend using Internet Identity principals, including a bootstrap mechanism to establish the first admin and a way for admins to manage the admin allowlist.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "I want admin access ad an option by which I can make changes and add plans"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend exposes a query method to check whether the caller is an admin.",
-        "Backend restricts all admin-only mutations with an explicit admin check (non-admin calls are rejected).",
-        "Backend supports a bootstrap flow so that an admin can be established when the admin list is empty (documented via method behavior and enforced in code).",
-        "Backend provides admin-only methods to add and remove admin principals."
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Move pricing plan data to backend-managed state and expose public read access plus admin CRUD operations so pricing plans can be added/updated/removed without editing frontend code.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "I want admin access ad an option by which I can make changes and add plans"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend stores pricing plans in stable state and returns them via a public query method (no authentication required to read).",
-        "Backend provides admin-only methods to create, update, and delete pricing plans.",
-        "On a fresh deploy, the backend initializes pricing plans to match the current two plans shown in frontend/src/content/siteCopy.ts (Starter and Iron).",
-        "Plan fields support at least: name, description, price, period, popular flag, feature list, and CTA label."
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Add an admin access option in the frontend header using Internet Identity login/logout controls, and show an Admin entry point only when the logged-in principal is an admin.",
+      "id": "REQ-12",
+      "text": "Rename every visible CTA label that currently displays \"Start Free Trial\" to \"PLANS\" using the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "I want admin access ad an option by which I can make changes and add plans"
+          "I want that rename start free trial to PLANS"
         ]
       },
       "acceptanceCriteria": [
-        "Header displays a “Sign in” button when logged out and a “Sign out” button when logged in (English text).",
-        "When logged in, the UI checks admin status via the backend and only then shows an “Admin” button/link.",
-        "Non-admin users can sign in but do not see admin management UI entry points."
+        "In the hero section, the primary CTA button label displays exactly \"PLANS\".",
+        "In the final CTA section (Contact section), the primary CTA button label displays exactly \"PLANS\".",
+        "No other UI element still displays the exact text \"Start Free Trial\" after the change.",
+        "The updated labels come from frontend/src/content/siteCopy.ts (not hardcoded in components)."
       ]
     },
     {
-      "id": "REQ-10",
-      "text": "Create an admin UI that allows admins to add, edit, and delete pricing plans, and persist changes via the backend; include basic validation and clear success/error states in English.",
+      "id": "REQ-13",
+      "text": "Update the \"Talk to Sales\" button behavior so it opens the user’s Discord invite link https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "I want admin access ad an option by which I can make changes and add plans"
+          "Add function of talk to sales is that it opens my discord",
+          "The link of my discord is  https://discord.gg/NMcBdXYVFe"
         ]
       },
       "acceptanceCriteria": [
-        "Admin UI provides a form to add a new plan and an interface to edit/delete existing plans.",
-        "Admin UI supports editing all plan fields used by the landing Pricing section (name, description, price, period, popular, features list, CTA).",
-        "UI prevents saving obviously invalid data (e.g., empty name/price) and shows errors in English when backend rejects a request.",
-        "After a successful change, the landing pricing display reflects the updated plans without a hard refresh (React Query invalidation/refetch or equivalent)."
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "text": "Update the landing Pricing section to render pricing plans from backend data (with a safe fallback), keeping the existing card layout and interactions.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "I want admin access ad an option by which I can make changes and add plans"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Pricing section fetches plans from the backend and renders them in the existing two-column card layout.",
-        "While loading, the Pricing section shows a sensible loading state (English text) and does not break page layout.",
-        "If backend fetch fails, the Pricing section falls back to the existing siteCopy.pricing.plans so the marketing page remains usable.",
-        "All existing visible labels in the Pricing section remain in English (e.g., “Most Popular”)."
+        "Clicking the \"Talk to Sales\" button opens https://discord.gg/NMcBdXYVFe in a new tab/window.",
+        "The \"Talk to Sales\" button remains visible and retains its current styling/variant (outline) and label text.",
+        "The implementation uses safe external-link handling (e.g., includes noopener/noreferrer if using window.open or an anchor tag)."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
-    "Use Internet Identity for authentication; do not add third-party auth providers.",
-    "Do not edit files under frontend/src/components/ui or other frontend immutable paths listed in SYSTEM_CONTEXT; compose those components instead."
+    "Do not edit files under frontend/src/components/ui (read-only).",
+    "Keep all user-facing text in English.",
+    "Use frontend/src/content/siteCopy.ts as the centralized place for landing-page copy updates."
   ],
   "nonGoals": [
-    "Implementing payments, checkout flows, or subscription billing.",
-    "Adding non-pricing content management (e.g., editing hero/features/FAQ copy) beyond pricing plan management.",
-    "Real-time multi-user collaboration or websockets-based admin updates."
+    "Add Discord login or any Discord OAuth authentication.",
+    "Change pricing plan backend/admin functionality.",
+    "Change the site visual theme, layout structure, or section order beyond the requested button label and click behavior."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }
