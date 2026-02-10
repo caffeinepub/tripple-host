@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 7,
+  "summary": "Create a website similar to https://stranger-nodes-55e.caffeine.xyz/ named \"tripple host\".",
+  "architectural_notes": [
+    "Add authenticated admin interface to edit site content and manage pricing plans (create/update/delete), rather than hardcoded-only plans."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-responsive-marketing-landing-website-that-closely-matches-the-structure-layout-and-interactions-of-the-reference-site-at-https-stranger-nodes-55e-caffeine-xyz-same-overall-page-sections-spacing-rhythm-component-patterns-and-any-visible-hover-scroll-animations-but-rebrand-all-naming-to-tripple-host",
+      "title": "Create a responsive marketing/landing website that closely matches the structure, layout, and interactions of the reference site at https://stranger-nodes-55e.caffeine.xyz/ (same overall page sections, spacing rhythm, component patterns, and any visible hover/scroll animations), but rebrand all naming to “tripple host”.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-user-facing-text-content-is-in-english-and-provide-a-single-clearly-named-place-in-the-frontend-code-to-edit-the-site-s-copy-e-g-a-content-config-object-so-the-tripple-host-headings-descriptions-and-section-text-can-be-updated-without-hunting-through-many-files",
+      "title": "Ensure all user-facing text content is in English and provide a single, clearly named place in the frontend code to edit the site’s copy (e.g., a content/config object) so the “tripple host” headings, descriptions, and section text can be updated without hunting through many files.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-distinct-coherent-visual-theme-for-the-tripple-host-site-colors-typography-buttons-cards-backgrounds-and-enforce-it-consistently-across-all-sections-do-not-use-a-blue-purple-theme-unless-it-is-explicitly-required-by-the-reference",
+      "title": "Apply a distinct, coherent visual theme for the “tripple host” site (colors, typography, buttons, cards, backgrounds) and enforce it consistently across all sections; do not use a blue+purple theme unless it is explicitly required by the reference.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-set-the-app-s-page-metadata-to-reflect-the-new-site-branding-document-title-and-any-visible-header-hero-branding-as-tripple-host",
+      "title": "Set the app’s page metadata to reflect the new site branding (document title and any visible header/hero branding) as “tripple host”.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-include-a-simple-brand-logo-and-a-subtle-background-hero-graphic-for-tripple-host-as-static-assets-and-render-them-in-the-ui-served-from-frontend-public-assets-generated",
+      "title": "Generate and include a simple brand logo and a subtle background/hero graphic for “tripple host” as static assets, and render them in the UI (served from frontend/public/assets/generated).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-tripple-host-pricing-section-to-show-exactly-two-plans-starter-and-iron-with-the-user-provided-prices-and-ram-amounts-using-the-existing-centralized-copy-config-frontend-src-content-sitecopy-ts-as-the-single-source-of-truth",
+      "title": "Update the Tripple Host Pricing section to show exactly two plans—Starter and Iron—with the user-provided prices and RAM amounts, using the existing centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-access-option-in-the-frontend-header-using-internet-identity-login-logout-controls-and-show-an-admin-entry-point-only-when-the-logged-in-principal-is-an-admin",
+      "title": "Add an admin access option in the frontend header using Internet Identity login/logout controls, and show an Admin entry point only when the logged-in principal is an admin.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-admin-ui-that-allows-admins-to-add-edit-and-delete-pricing-plans-and-persist-changes-via-the-backend-include-basic-validation-and-clear-success-error-states-in-english",
+      "title": "Create an admin UI that allows admins to add, edit, and delete pricing plans, and persist changes via the backend; include basic validation and clear success/error states in English.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-landing-pricing-section-to-render-pricing-plans-from-backend-data-with-a-safe-fallback-keeping-the-existing-card-layout-and-interactions",
+      "title": "Update the landing Pricing section to render pricing plans from backend data (with a safe fallback), keeping the existing card layout and interactions.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Build a website similar to https://stranger-nodes-55e.caffeine.xyz/ with the name \"tripple host\".",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add/update the Pricing section on the Tripple Host website with two plans: Starter (80 rs, 2 GB RAM) and Iron (150 rs, 4 GB RAM).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add an admin access option (authentication + admin UI) so the user can make site changes and manage/add pricing plans.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Implement admin authorization in the Motoko backend using Internet Identity principals, including a bootstrap mechanism to establish the first admin and a way for admins to manage the admin allowlist.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Move pricing plan data to backend-managed state and expose public read access plus admin CRUD operations so pricing plans can be added/updated/removed without editing frontend code.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "tripple host",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

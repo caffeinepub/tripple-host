@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.625rem;
+        
+        /* Warm neutral base with teal/emerald accents */
+        --background: 0.98 0.005 60;
+        --foreground: 0.15 0.01 60;
+        
+        --card: 1 0 0;
+        --card-foreground: 0.15 0.01 60;
+        
+        --popover: 1 0 0;
+        --popover-foreground: 0.15 0.01 60;
+        
+        /* Teal/emerald primary */
+        --primary: 0.55 0.15 170;
+        --primary-foreground: 0.99 0 0;
+        
+        /* Warm secondary */
+        --secondary: 0.95 0.01 60;
+        --secondary-foreground: 0.15 0.01 60;
+        
+        --muted: 0.96 0.005 60;
+        --muted-foreground: 0.50 0.01 60;
+        
+        /* Soft accent */
+        --accent: 0.94 0.02 160;
+        --accent-foreground: 0.15 0.01 60;
+        
+        --destructive: 0.577 0.245 27.325;
+        --destructive-foreground: 0.985 0 0;
+        
+        --border: 0.90 0.01 60;
+        --input: 0.90 0.01 60;
+        --ring: 0.55 0.15 170;
+        
+        --chart-1: 0.646 0.222 41.116;
+        --chart-2: 0.6 0.118 184.704;
+        --chart-3: 0.398 0.07 227.392;
+        --chart-4: 0.828 0.189 84.429;
+        --chart-5: 0.769 0.188 70.08;
+    }
+
+    .dark {
+        --background: 0.12 0.01 60;
+        --foreground: 0.98 0.005 60;
+        
+        --card: 0.16 0.01 60;
+        --card-foreground: 0.98 0.005 60;
+        
+        --popover: 0.14 0.01 60;
+        --popover-foreground: 0.98 0.005 60;
+        
+        /* Brighter teal for dark mode */
+        --primary: 0.65 0.18 170;
+        --primary-foreground: 0.12 0.01 60;
+        
+        --secondary: 0.20 0.01 60;
+        --secondary-foreground: 0.98 0.005 60;
+        
+        --muted: 0.18 0.01 60;
+        --muted-foreground: 0.65 0.01 60;
+        
+        --accent: 0.22 0.02 160;
+        --accent-foreground: 0.98 0.005 60;
+        
+        --destructive: 0.60 0.22 27;
+        --destructive-foreground: 0.98 0 0;
+        
+        --border: 0.25 0.01 60;
+        --input: 0.25 0.01 60;
+        --ring: 0.65 0.18 170;
+        
+        --chart-1: 0.488 0.243 264.376;
+        --chart-2: 0.696 0.17 162.48;
+        --chart-3: 0.769 0.188 70.08;
+        --chart-4: 0.627 0.265 303.9;
+        --chart-5: 0.645 0.246 16.439;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "rlig" 1, "calt" 1;
+    }
+    
+    html {
+        scroll-behavior: smooth;
+    }
+}
