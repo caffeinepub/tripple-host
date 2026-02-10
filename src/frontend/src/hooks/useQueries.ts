@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
-import type { PricingPlan, UserProfile, SiteSettings, EditableSettings, ExternalBlob, UserRole, AdminPrincipal } from '../backend';
+import type { PricingPlan, UserProfile, SiteSettings, EditableSettings, ExternalBlob, UserRole, AdminPrincipal, Review, ReviewSummary } from '../backend';
 
 // Admin Status
 export function useIsCallerAdmin() {
@@ -40,7 +40,7 @@ export function useCheckAdminsExist() {
       }
     },
     enabled: !!actor && !actorFetching,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 1 * 60 * 1000, // 1 minute - shorter for more responsive header state
   });
 }
 
@@ -94,15 +94,15 @@ export function useGetAdminList() {
   return useQuery<AdminPrincipal[]>({
     queryKey: ['adminList'],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) throw new Error('Actor not available');
       try {
         return await actor.getAdminList();
       } catch (error: any) {
-        if (error.message?.includes('Unauthorized')) {
-          throw new Error('You do not have permission to view the admin list. Admin access required.');
+        const errorMessage = error.message || '';
+        if (errorMessage.includes('Unauthorized')) {
+          throw new Error('You do not have permission to view the admin list.');
         }
-        console.error('Error fetching admin list:', error);
-        return [];
+        throw new Error('Failed to load admin list. Please try again.');
       }
     },
     enabled: !!actor && !!identity && !actorFetching,
@@ -115,20 +115,24 @@ export function useAddAdmin() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (principalText: string) => {
+    mutationFn: async (newAdminPrincipal: AdminPrincipal) => {
       if (!actor) throw new Error('Actor not available');
       try {
-        await actor.addAdmin(principalText);
+        await actor.addAdmin(newAdminPrincipal);
       } catch (error: any) {
-        if (error.message?.includes('Unauthorized')) {
-          throw new Error('You do not have permission to add admins. Admin access required.');
+        const errorMessage = error.message || '';
+        if (errorMessage.includes('Unauthorized')) {
+          throw new Error('You do not have permission to add administrators.');
         }
-        throw new Error('Failed to add admin. Please check the principal ID and try again.');
+        if (errorMessage.includes('Invalid principal') || errorMessage.includes('parse')) {
+          throw new Error('Invalid principal ID format. Please check and try again.');
+        }
+        throw new Error('Failed to add administrator. Please try again.');
       }
     },
     onSuccess: () => {
+      // Immediately refetch admin list to show the new admin
       queryClient.invalidateQueries({ queryKey: ['adminList'] });
-      queryClient.invalidateQueries({ queryKey: ['adminsExist'] });
     },
   });
 }
@@ -138,89 +142,42 @@ export function useRemoveAdmin() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (principalText: string) => {
+    mutationFn: async (adminPrincipal: AdminPrincipal) => {
       if (!actor) throw new Error('Actor not available');
       try {
-        await actor.removeAdmin(principalText);
+        await actor.removeAdmin(adminPrincipal);
       } catch (error: any) {
-        if (error.message?.includes('Unauthorized')) {
-          throw new Error('You do not have permission to remove admins. Admin access required.');
+        const errorMessage = error.message || '';
+        if (errorMessage.includes('Cannot remove the last admin')) {
+          throw new Error('Cannot remove the last administrator. At least one admin must remain.');
         }
-        if (error.message?.includes('last admin')) {
-          throw new Error('Cannot remove the last admin. At least one admin must remain.');
+        if (errorMessage.includes('Cannot remove yourself')) {
+          throw new Error('You cannot remove yourself as an administrator.');
         }
-        if (error.message?.includes('yourself')) {
-          throw new Error('You cannot remove yourself as an admin.');
+        if (errorMessage.includes('Unauthorized')) {
+          throw new Error('You do not have permission to remove administrators.');
         }
-        throw new Error('Failed to remove admin. Please try again.');
+        throw new Error('Failed to remove administrator. Please try again.');
       }
     },
     onSuccess: () => {
+      // Immediately refetch admin list to reflect the removal
       queryClient.invalidateQueries({ queryKey: ['adminList'] });
-      queryClient.invalidateQueries({ queryKey: ['adminsExist'] });
-    },
-  });
-}
-
-// User Profile
-export function useGetCallerUserProfile() {
-  const { actor, isFetching: actorFetching } = useActor();
-  const { identity } = useInternetIdentity();
-
-  const query = useQuery<UserProfile | null>({
-    queryKey: ['currentUserProfile', identity?.getPrincipal().toString()],
-    queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      try {
-        return await actor.getCallerUserProfile();
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-        return null;
-      }
-    },
-    enabled: !!actor && !!identity && !actorFetching,
-    retry: false,
-  });
-
-  return {
-    ...query,
-    isLoading: actorFetching || query.isLoading,
-    isFetched: !!actor && query.isFetched,
-  };
-}
-
-export function useSaveCallerUserProfile() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (profile: UserProfile) => {
-      if (!actor) throw new Error('Actor not available');
-      await actor.saveCallerUserProfile(profile);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
     },
   });
 }
 
 // Pricing Plans
 export function useGetAllPricingPlans() {
-  const { actor, isFetching: actorFetching } = useActor();
+  const { actor, isFetching } = useActor();
 
   return useQuery<PricingPlan[]>({
     queryKey: ['pricingPlans'],
     queryFn: async () => {
       if (!actor) return [];
-      try {
-        return await actor.getAllPricingPlans();
-      } catch (error) {
-        console.error('Error fetching pricing plans:', error);
-        return [];
-      }
+      return actor.getAllPricingPlans();
     },
-    enabled: !!actor && !actorFetching,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    enabled: !!actor && !isFetching,
   });
 }
 
@@ -229,7 +186,7 @@ export function useCreatePricingPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (params: {
+    mutationFn: async (plan: {
       name: string;
       description: string;
       priceCents: bigint;
@@ -237,12 +194,12 @@ export function useCreatePricingPlan() {
       features: string[];
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return await actor.createPricingPlan(
-        params.name,
-        params.description,
-        params.priceCents,
-        params.durationDays,
-        params.features
+      return actor.createPricingPlan(
+        plan.name,
+        plan.description,
+        plan.priceCents,
+        plan.durationDays,
+        plan.features
       );
     },
     onSuccess: () => {
@@ -256,7 +213,7 @@ export function useUpdatePricingPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (params: {
+    mutationFn: async (plan: {
       id: bigint;
       name: string;
       description: string;
@@ -265,13 +222,13 @@ export function useUpdatePricingPlan() {
       features: string[];
     }) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.updatePricingPlan(
-        params.id,
-        params.name,
-        params.description,
-        params.priceCents,
-        params.durationDays,
-        params.features
+      return actor.updatePricingPlan(
+        plan.id,
+        plan.name,
+        plan.description,
+        plan.priceCents,
+        plan.durationDays,
+        plan.features
       );
     },
     onSuccess: () => {
@@ -287,7 +244,7 @@ export function useDeletePricingPlan() {
   return useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.deletePricingPlan(id);
+      return actor.deletePricingPlan(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pricingPlans'] });
@@ -295,17 +252,54 @@ export function useDeletePricingPlan() {
   });
 }
 
+// User Profile
+export function useGetCallerUserProfile() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  const query = useQuery<UserProfile | null>({
+    queryKey: ['currentUserProfile'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getCallerUserProfile();
+    },
+    enabled: !!actor && !actorFetching,
+    retry: false,
+  });
+
+  // Return custom state that properly reflects actor dependency
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+    isFetched: !!actor && query.isFetched,
+  };
+}
+
+export function useSaveCallerUserProfile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (profile: UserProfile) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.saveCallerUserProfile(profile);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    },
+  });
+}
+
 // Site Settings
 export function useGetSiteSettings() {
-  const { actor, isFetching: actorFetching } = useActor();
+  const { actor, isFetching } = useActor();
 
   return useQuery<SiteSettings>({
     queryKey: ['siteSettings'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return await actor.getSiteSettings();
+      return actor.getSiteSettings();
     },
-    enabled: !!actor && !actorFetching,
+    enabled: !!actor && !isFetching,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -317,14 +311,7 @@ export function useUpdateSiteSettings() {
   return useMutation({
     mutationFn: async (settings: EditableSettings) => {
       if (!actor) throw new Error('Actor not available');
-      try {
-        return await actor.updateSiteSettings(settings);
-      } catch (error: any) {
-        if (error.message?.includes('Unauthorized')) {
-          throw new Error('You do not have permission to update site settings. Admin access required.');
-        }
-        throw error;
-      }
+      return actor.updateSiteSettings(settings);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['siteSettings'] });
@@ -334,20 +321,15 @@ export function useUpdateSiteSettings() {
 
 // Logo Management
 export function useGetLogo() {
-  const { actor, isFetching: actorFetching } = useActor();
+  const { actor, isFetching } = useActor();
 
   return useQuery<ExternalBlob | null>({
     queryKey: ['logo'],
     queryFn: async () => {
       if (!actor) return null;
-      try {
-        return await actor.getLogo();
-      } catch (error) {
-        console.error('Error fetching logo:', error);
-        return null;
-      }
+      return actor.getLogo();
     },
-    enabled: !!actor && !actorFetching,
+    enabled: !!actor && !isFetching,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 }
@@ -359,17 +341,53 @@ export function useUpdateLogo() {
   return useMutation({
     mutationFn: async (blob: ExternalBlob) => {
       if (!actor) throw new Error('Actor not available');
-      try {
-        await actor.updateLogo(blob);
-      } catch (error: any) {
-        if (error.message?.includes('Unauthorized')) {
-          throw new Error('You do not have permission to update the logo. Admin access required.');
-        }
-        throw error;
-      }
+      return actor.updateLogo(blob);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['logo'] });
+    },
+  });
+}
+
+// Reviews
+export function useGetReviewSummary() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<ReviewSummary>({
+    queryKey: ['reviewSummary'],
+    queryFn: async () => {
+      if (!actor) return { averageRating: 0, totalCount: BigInt(0) };
+      return actor.getReviewSummary();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetRecentReviews(limit: number = 10) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Review[]>({
+    queryKey: ['recentReviews', limit],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getRecentReviews(BigInt(limit));
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useCreateReview() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ rating, comment }: { rating: number; comment?: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createReview(BigInt(rating), comment || null);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reviewSummary'] });
+      queryClient.invalidateQueries({ queryKey: ['recentReviews'] });
     },
   });
 }

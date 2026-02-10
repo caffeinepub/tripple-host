@@ -1,15 +1,16 @@
 import Iter "mo:core/Iter";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
+import Time "mo:core/Time";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
 import Storage "blob-storage/Storage";
+import Migration "migration";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
-
-
+(with migration = Migration.run)
 actor {
   // Types
   public type PricingPlan = {
@@ -67,10 +68,23 @@ actor {
     footerSupport : ?Text;
   };
 
-  // Persistent State
+  public type Review = {
+    rating : Nat;
+    comment : ?Text;
+    timestamp : Int;
+  };
+
+  public type ReviewSummary = {
+    averageRating : Float;
+    totalCount : Nat;
+  };
+
   let pricingPlans = Map.empty<Nat, PricingPlan>();
   var nextPlanId : Nat = 0;
   let userProfiles = Map.empty<Principal, UserProfile>();
+  let reviews = Map.empty<Nat, Review>();
+  var nextReviewId : Nat = 0;
+
   var siteSettings : SiteSettings = {
     navCtaText = "Try Now";
     navCtaLink = "#pricing";
@@ -96,7 +110,7 @@ actor {
   var adminPrincipals = Map.empty<Text, Bool>();
   let accessControlState = AccessControl.initState();
 
-  // Include Mixins
+  // Mixins
   include MixinAuthorization(accessControlState);
   include MixinStorage();
 
@@ -170,10 +184,9 @@ actor {
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can view profiles");
+    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own profile");
     };
-
     userProfiles.get(user);
   };
 
@@ -293,7 +306,7 @@ actor {
 
   public query ({ caller }) func getAdminList() : async [AdminPrincipal] {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can view admin list");
+      Runtime.trap("Unauthorized: Only admins can view the admin list");
     };
     adminPrincipals.keys().toArray();
   };
@@ -332,14 +345,58 @@ actor {
       Runtime.trap("Unauthorized: Only admins can remove admins");
     };
 
+    // Prevent from removing the last admin
     if (adminPrincipals.size() <= 1) {
-      Runtime.trap("Cannot remove the last admin");
+      Runtime.trap("Cannot remove the last admin.");
     };
 
+    // Prevent from removing themselves
     if (caller.toText() == adminText) {
-      Runtime.trap("Cannot remove yourself as admin");
+      Runtime.trap("Cannot remove yourself as admin.");
     };
 
     adminPrincipals.remove(adminText);
+  };
+
+  // Reviews
+  public shared ({ caller }) func createReview(rating : Nat, comment : ?Text) : async () {
+    // SECURITY: Only authenticated users can submit reviews to prevent spam and abuse
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can submit reviews");
+    };
+
+    if (rating < 1 or rating > 5) {
+      Runtime.trap("Invalid rating: must be between 1 and 5");
+    };
+
+    let review : Review = {
+      rating;
+      comment;
+      timestamp = Time.now();
+    };
+
+    reviews.add(nextReviewId, review);
+    nextReviewId += 1;
+  };
+
+  public query func getReviewSummary() : async ReviewSummary {
+    let values = reviews.values().toArray();
+    if (values.size() == 0) {
+      return { averageRating = 0; totalCount = 0 };
+    };
+
+    let total = values.foldLeft(0, func(acc, r) { acc + r.rating });
+    let average = total.toFloat() / values.size().toFloat();
+    { averageRating = average; totalCount = values.size() };
+  };
+
+  public query func getRecentReviews(limit : Nat) : async [Review] {
+    let values = reviews.toArray();
+    if (values.size() == 0) {
+      return [];
+    };
+
+    let actualLimit = if (values.size() < limit) { values.size() } else { limit };
+    values.sliceToArray(0, actualLimit).map(func(t) { t.1 });
   };
 };

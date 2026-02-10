@@ -1,70 +1,45 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T09:24:33.061Z",
-  "summary": "Diff includes partial updates to deployment docs and significant changes across many frontend application components. The deployment scripts appear to add directory checks and some verification steps, but key acceptance criteria cannot be confirmed due to truncation and the deployment doc still appears incomplete. Many unrelated frontend feature/UI changes were introduced that are outside the deployment-focused BuildRequest.",
+  "generatedAt": "2026-02-10T11:17:08.391Z",
+  "summary": "REQ-38 and REQ-40 appear implemented on the frontend via centralized nav config (including a Reviews link) and conditional header entry points based on admin existence/admin status. Admin allowlist management UI and React Query hooks were added/updated, but backend-side admin list endpoints/error handling (admin-only enforcement and last-admin removal prevention) are not evidenced in the provided backend diff snippet. Diff also introduces a migration file and mentions a new/repositioned Reviews section, which were not requested and may violate stated non-goals/constraints.",
   "missing_requirements": [
     {
-      "id": "REQ-31",
-      "requirement": "Fix and complete the deployment documentation in frontend/DEPLOYMENT.md so it is end-to-end for IC mainnet, not abrupt, valid Markdown, references scripts, states working directory, and includes env setup matching .env.example (DFX_NETWORK=ic, II_URL=https://identity.ic0.app).",
-      "reason": "The DEPLOYMENT.md content shown is incomplete and appears to end mid-section (\"For local development with `dfx start`:\") with no ordered mainnet deployment section visible in the provided excerpt, and the Markdown shows an opening code fence without a visible closure in the excerpt.",
+      "id": "REQ-39",
+      "requirement": "Backend enforces admin-only access for viewing/modifying the admin list and returns clear English error messages for unauthorized access; backend prevents removing the last remaining admin with a clear English error message.",
+      "reason": "Frontend hooks/components reference getAdminList/add/remove and mention backend enforcement, but the truncated backend diff provided does not show implementations of getAdminList/addAdmin/removeAdmin (or equivalent), nor any explicit checks/error messages for unauthorized access or preventing removal of the last admin.",
       "evidence": [
-        "frontend/DEPLOYMENT.md (truncated excerpt ends at 'For local development with `dfx start`:' and shows an opening code fence with no closure in the excerpt)"
-      ]
-    },
-    {
-      "id": "REQ-32",
-      "requirement": "On success, deploy-ic.sh prints the frontend URL in the exact form https://<FRONTEND_CANISTER_ID>.ic0.app.",
-      "reason": "The deploy script is truncated before completion; the provided portion does not show a final success message printing the frontend URL in the required exact form.",
-      "evidence": [
-        "frontend/scripts/deploy-ic.sh (truncated before completion; no final URL output visible)"
-      ]
-    },
-    {
-      "id": "REQ-33",
-      "requirement": "Verification checklist includes critical smoke tests: open deployed URL, verify no console errors, complete Internet Identity login/logout, claim initial admin access only when no admins exist, and open Admin Panel after admin claim (English text).",
-      "reason": "verify-deploy.sh includes a 'Manual Verification Checklist' and shows steps 1–2 in the excerpt, but the excerpt is truncated before the items about Internet Identity login/logout, initial admin claim behavior, and opening the Admin Panel can be confirmed.",
-      "evidence": [
-        "frontend/scripts/verify-deploy.sh (truncated in the manual checklist section)"
+        "backend/main.mo (truncated)",
+        "frontend/src/hooks/useQueries.ts (truncated)",
+        "frontend/src/components/admin/AdminsAdminPanel.tsx (truncated)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Large-scale frontend UI/feature refactors and additions unrelated to deployment reliability (landing page content/system, admin panels, logo upload UI, profile dialogs, styling/theme changes).",
-      "reason": "BuildRequest scope is deployment documentation/scripts and verification checklist; it explicitly lists non-goals of adding new application features unrelated to deployment. The diff summary indicates many modified/added frontend components and behavior changes beyond deployment.",
+      "description": "Added backend migration module (backend/migration.mo) with a no-op state transformation.",
+      "reason": "BuildRequest allows adding backend/migration.mo only if a state upgrade is required; the diff summary provides no evidence of a required upgrade or any actual migration logic beyond returning empty state.",
       "evidence": [
-        "frontend-file-summaries.txt (lists extensive changes across frontend/src/pages/LandingPage.tsx, frontend/src/components/landing/*, frontend/src/components/admin/*, frontend/src/components/profile/*, frontend/src/index.css, frontend/tailwind.config.js, frontend/src/hooks/useQueries.ts, etc.)"
+        "backend/migration.mo"
       ]
     },
     {
-      "description": "Changes to landing page CTA behavior (e.g., \"Purchase Plans\" opening Discord invite in a new tab).",
-      "reason": "Not requested by any deployment-related requirement (REQ-31/32/33) and falls under unrelated application behavior changes.",
+      "description": "Landing page section order/content change implying a new Reviews section inserted between Pricing and FAQ.",
+      "reason": "Non-goal states not to change overall landing page section order beyond making the existing Reviews section discoverable via navigation. The diff summary text indicates the Reviews section is newly added/positioned between Pricing and FAQ, which goes beyond merely adding navigation discoverability.",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/landing/Sections.tsx\": \"\\\"Purchase Plans\\\" button opening Discord invite in new tab.\")"
-      ]
-    },
-    {
-      "description": "New/expanded admin functionality (unified admin panel with multiple tabs, pricing plan CRUD, site customization, logo uploads, admin list management, admin access denied overlay).",
-      "reason": "Not part of the deployment workflow reliability requirements; constitutes new/expanded application features beyond what is required for deployment verification.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/admin/AdminPanel.tsx\": unified admin panel; \"PricingPlansAdminPanel.tsx\": CRUD; \"SiteCustomizationAdminPanel.tsx\"; \"LogoAdminPanel.tsx\"; \"AdminsAdminPanel.tsx\"; \"AdminAccessDenied.tsx\"; \"AdminSetupDialog.tsx\")"
-      ]
-    },
-    {
-      "description": "Visual/theme system changes (custom OKLCH color system, Tailwind extensions, animations, scroll reveal component).",
-      "reason": "Not requested for deployment documentation/scripts; unrelated to making IC deployment workflow reliable.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/index.css\": custom OKLCH color system; \"frontend/tailwind.config.js\": extended config; \"frontend/src/components/landing/ScrollReveal.tsx\": IntersectionObserver reveal animation)"
+        "frontend-file-summaries.txt"
       ]
     }
   ],
   "confidence": 0.62,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/DEPLOYMENT.md",
-    "frontend/scripts/deploy-ic.sh",
-    "frontend/scripts/verify-deploy.sh",
+    "frontend/src/components/admin/AdminsAdminPanel.tsx",
+    "frontend/src/components/landing/Header.tsx",
+    "frontend/src/content/siteCopy.ts",
+    "frontend/src/hooks/useQueries.ts",
     "project_state.json"
   ]
 }

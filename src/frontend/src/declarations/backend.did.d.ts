@@ -40,6 +40,15 @@ export interface PricingPlan {
   'description' : string,
   'priceCents' : bigint,
 }
+export interface Review {
+  'comment' : [] | [string],
+  'timestamp' : bigint,
+  'rating' : bigint,
+}
+export interface ReviewSummary {
+  'totalCount' : bigint,
+  'averageRating' : number,
+}
 export interface SiteSettings {
   'footerTagline' : string,
   'footerSupport' : string,
@@ -99,6 +108,7 @@ export interface _SERVICE {
     [string, string, bigint, bigint, Array<string>],
     bigint
   >,
+  'createReview' : ActorMethod<[bigint, [] | [string]], undefined>,
   'deletePricingPlan' : ActorMethod<[bigint], undefined>,
   'doesAdminExist' : ActorMethod<[], boolean>,
   'getAdminList' : ActorMethod<[], Array<AdminPrincipal>>,
@@ -107,6 +117,8 @@ export interface _SERVICE {
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getLogo' : ActorMethod<[], [] | [ExternalBlob]>,
   'getPricingPlan' : ActorMethod<[bigint], [] | [PricingPlan]>,
+  'getRecentReviews' : ActorMethod<[bigint], Array<Review>>,
+  'getReviewSummary' : ActorMethod<[], ReviewSummary>,
   'getSiteSettings' : ActorMethod<[], SiteSettings>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,

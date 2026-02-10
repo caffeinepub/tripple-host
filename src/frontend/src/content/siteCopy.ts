@@ -5,6 +5,7 @@ export const siteCopy = {
   nav: [
     { id: 'features', label: 'Features' },
     { id: 'pricing', label: 'Pricing' },
+    { id: 'reviews', label: 'Reviews' },
     { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: 'Contact' },
   ],
@@ -111,6 +112,23 @@ export const siteCopy = {
       },
     ],
   },
+  reviews: {
+    title: 'Customer Reviews',
+    subtitle: 'See what our customers have to say about their experience with tripple host.',
+    formTitle: 'Share Your Experience',
+    formDescription: 'Help others by sharing your experience with our service.',
+    ratingLabel: 'Your Rating',
+    commentLabel: 'Your Review (Optional)',
+    commentPlaceholder: 'Tell us about your experience...',
+    submitButton: 'Submit Review',
+    submittingButton: 'Submitting...',
+    validationError: 'Please select a rating before submitting.',
+    successMessage: 'Thank you for your review! Your feedback helps us improve.',
+    errorMessage: 'Failed to submit review. Please try again.',
+    loginRequired: 'Please sign in to submit a review.',
+    basedOn: 'Based on {count} reviews',
+    recentReviewsTitle: 'Recent Reviews',
+  },
   faq: {
     title: 'Frequently Asked Questions',
     subtitle: 'Everything you need to know about tripple host.',
@@ -151,36 +169,39 @@ export const siteCopy = {
     badge: '24/7 Support Available',
     title: 'Ready to Experience the Difference?',
     subtitle:
-      'Join thousands of developers and businesses who trust tripple host for their hosting needs. Get started today.',
-    noRefundReminder: 'Please note: All purchases are final and non-refundable.',
-    primaryCTA: 'PLANS',
+      'Join thousands of developers and businesses who trust tripple host for their hosting needs.',
+    noRefundReminder: 'Remember: All purchases are final and non-refundable.',
+    primaryCTA: 'View Plans',
     secondaryCTA: 'Purchase Plans',
   },
   footer: {
-    tagline: 'Premium hosting solutions built for performance and reliability.',
+    tagline: 'Premium hosting built for performance.',
+    cta: 'Get Started',
+    links: {
+      terms: 'Terms of Service',
+      privacy: 'Privacy Policy',
+      support: 'Support',
+    },
     columns: [
       {
         title: 'Product',
         links: [
           { id: 'features', label: 'Features' },
           { id: 'pricing', label: 'Pricing' },
+        ],
+      },
+      {
+        title: 'Support',
+        links: [
           { id: 'faq', label: 'FAQ' },
+          { id: 'contact', label: 'Contact' },
         ],
       },
       {
         title: 'Company',
         links: [
-          { id: 'contact', label: 'About Us' },
-          { id: 'contact', label: 'Contact' },
-          { id: 'contact', label: 'Careers' },
-        ],
-      },
-      {
-        title: 'Resources',
-        links: [
-          { id: 'contact', label: 'Documentation' },
-          { id: 'contact', label: 'API Reference' },
-          { id: 'contact', label: 'Status' },
+          { id: 'features', label: 'About' },
+          { id: 'contact', label: 'Contact Us' },
         ],
       },
     ],

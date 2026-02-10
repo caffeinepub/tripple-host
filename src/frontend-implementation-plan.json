@@ -1,64 +1,76 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Reliable IC mainnet deployment workflow for Tripple Host (docs + scripts)",
+  "title": "Restore Reviews discoverability and admin management UX",
   "requirements": [
     {
-      "id": "REQ-31",
-      "summary": "Complete and fix frontend/DEPLOYMENT.md so developers can deploy Tripple Host to IC mainnet end-to-end using the existing scripts.",
+      "id": "REQ-38",
+      "summary": "Add a visible \"Reviews\" navigation link (desktop + mobile) that scrolls to the existing landing-page Reviews section (#reviews) using centralized nav copy.",
       "acceptanceCriteria": [
-        "frontend/DEPLOYMENT.md no longer ends abruptly and has valid Markdown (no unclosed code fences).",
-        "DEPLOYMENT.md includes a complete, ordered mainnet deployment section that references the existing scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh).",
-        "DEPLOYMENT.md explicitly states the expected working directory for running the scripts (or provides commands that work from the repo root).",
-        "DEPLOYMENT.md includes environment setup instructions that match frontend/.env.example, including setting DFX_NETWORK=ic and II_URL=https://identity.ic0.app for mainnet."
+        "On the landing page, the header navigation includes a \"Reviews\" link on desktop and in the mobile menu.",
+        "Clicking the \"Reviews\" nav link scrolls/navigates to the existing Reviews section (#reviews).",
+        "No user-facing navigation labels are hardcoded in Header.tsx; use the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth for nav labels/targets where applicable."
       ],
       "file_operations": [
         {
-          "path": "frontend/DEPLOYMENT.md",
+          "path": "frontend/src/content/siteCopy.ts",
           "operation": "modify",
-          "description": "Fix broken/abrupt Markdown (close any open sections/code fences) and add a complete, ordered IC mainnet deployment guide. Explicitly document the expected working directory (repo root vs frontend/) and provide commands that work as documented. Include an environment setup section aligned with frontend/.env.example, explicitly calling out DFX_NETWORK=ic and II_URL=https://identity.ic0.app for mainnet, and reference running frontend/scripts/deploy-ic.sh followed by frontend/scripts/verify-deploy.sh."
+          "description": "Add a \"Reviews\" item to the centralized nav configuration (siteCopy.nav) with id \"reviews\" so Header can render it from a single source of truth."
+        },
+        {
+          "path": "frontend/src/components/landing/Header.tsx",
+          "operation": "modify",
+          "description": "Replace the hardcoded navLinks array with links derived from siteCopy.nav (including the new \"reviews\" item) so both desktop and mobile menus render the \"Reviews\" link that navigates to \"#reviews\"."
         }
       ]
     },
     {
-      "id": "REQ-32",
-      "summary": "Harden IC mainnet deployment/verification scripts to be reliably runnable with clear English output and correct success/failure exit behavior.",
+      "id": "REQ-39",
+      "summary": "Restore reliable Admin allowlist management UI (list/add/remove) with clear success/error messaging and immediate refresh after changes.",
       "acceptanceCriteria": [
-        "deploy-ic.sh and verify-deploy.sh run successfully when executed as documented in DEPLOYMENT.md.",
-        "If the scripts must be run from a specific directory, they detect incorrect invocation location and exit with a clear English error message explaining how to run them correctly.",
-        "On success, deploy-ic.sh prints the frontend URL in the exact form https://<FRONTEND_CANISTER_ID>.ic0.app.",
-        "verify-deploy.sh checks canister status and frontend HTTP accessibility (when curl is available) and exits non-zero with an English explanation when a check fails."
+        "As an admin, opening the Admin Panel shows an Admin Management area that lists current admin principals.",
+        "As an admin, adding a valid principal ID succeeds and the new principal appears in the admin list without a manual page refresh.",
+        "As an admin, removing an admin principal succeeds and the removed principal disappears from the list without a manual page refresh.",
+        "Backend enforces admin-only access for viewing/modifying the admin list and returns clear English error messages for unauthorized access.",
+        "Backend prevents removing the last remaining admin and returns a clear English error message that the UI can display."
       ],
       "file_operations": [
         {
-          "path": "frontend/scripts/deploy-ic.sh",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Make the script robust and predictable: add strict bash mode (e.g., pipefail/unset var handling), add a clear working-directory check (detect whether invoked from repo root vs frontend/ and either auto-correct paths or exit with an English message explaining the correct invocation), validate required tools (dfx, pnpm) with clear English errors, ensure dfx commands target mainnet consistently, and on success print the live frontend URL in the exact form https://<FRONTEND_CANISTER_ID>.ic0.app. Ensure all user-facing output is clear English."
+          "description": "Ensure admin allowlist mutations trigger an immediate UI refresh by explicitly refetching/invalidating admin-related queries after add/remove, and preserve/propagate clear English error messages that the Admin UI can display."
         },
         {
-          "path": "frontend/scripts/verify-deploy.sh",
+          "path": "frontend/src/components/admin/AdminsAdminPanel.tsx",
           "operation": "modify",
-          "description": "Harden verification behavior: add working-directory detection with a clear English error message when invoked incorrectly, check canister status and treat non-running status as a failure (exit non-zero with an English explanation), check frontend HTTP accessibility when curl is available and fail (exit non-zero) with an English explanation if the HTTP check does not succeed, and ensure success output clearly includes the live URL for the user to open."
+          "description": "Improve Admin Management UX: ensure add/remove success and error states are clear and reset appropriately, ensure the remove confirmation closes and the list reflects changes immediately, and optionally preempt last-admin removal in the UI (while still relying on backend enforcement)."
+        },
+        {
+          "path": "frontend/src/components/admin/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Verify the Admin Panel continues to surface the \"Admins\" tab and the Admin Management area prominently; adjust tab labeling/placement only as needed to make the allowlist management clearly discoverable."
         }
       ]
     },
     {
-      "id": "REQ-33",
-      "summary": "Ensure documentation/scripts include a mainnet verification checklist with critical functional smoke tests (landing load, II login/logout, first-admin claim gating, admin panel access).",
+      "id": "REQ-40",
+      "summary": "Make admin availability/access state obvious in the header: show “Set up admin access” only when no admins exist yet, and show “Admin” only for admins.",
       "acceptanceCriteria": [
-        "The documented manual verification steps explicitly include: open the deployed URL, verify no console errors on load, complete Internet Identity login/logout, claim initial admin access when no admins exist, and open the Admin Panel after admin claim.",
-        "All user-facing text added/updated in docs/scripts is in English."
+        "When the user is signed in and the backend reports no admins exist, the header shows a “Set up admin access” button.",
+        "When the backend reports admins exist, the “Set up admin access” button is not shown.",
+        "When the signed-in user is an admin, the header shows an “Admin” button that opens the Admin Panel.",
+        "When the signed-in user is not an admin, the header does not show the “Admin” button."
       ],
       "file_operations": [
         {
-          "path": "frontend/DEPLOYMENT.md",
+          "path": "frontend/src/components/landing/Header.tsx",
           "operation": "modify",
-          "description": "Add/replace a clear 'Post-deploy mainnet verification checklist' section that explicitly covers: opening the deployed URL, confirming no browser console errors on initial load, completing Internet Identity login and logout, confirming the initial admin claim flow is only possible when no admins exist, and opening the Admin Panel after a successful admin claim. Keep all added/updated text in English."
+          "description": "Align header admin entry points strictly with backend-derived state by verifying the conditional rendering logic for “Set up admin access” (adminsExist=false + signed-in) and “Admin” (isAdmin=true + signed-in), and ensure both desktop and mobile menus follow the same logic."
         },
         {
-          "path": "frontend/scripts/verify-deploy.sh",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Update the script's printed manual verification checklist so it includes the critical smoke tests verbatim: landing page loads, no console errors on load, Internet Identity login and logout, admin setup claim works only when no admins exist, and admin panel opens for admins. Ensure the printed guidance is clear English."
+          "description": "Harden admin-state queries (doesAdminExist/isCallerAdmin) for consistent header behavior by ensuring caching and refetch behavior updates promptly after admin bootstrap and allowlist changes."
         }
       ]
     }

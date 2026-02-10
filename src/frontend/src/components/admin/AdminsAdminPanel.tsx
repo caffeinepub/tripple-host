@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, UserPlus, Trash2, AlertCircle, CheckCircle2, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,16 @@ export default function AdminsAdminPanel() {
 
   const currentUserPrincipal = identity?.getPrincipal().toString();
 
+  // Reset success state after 3 seconds
+  useEffect(() => {
+    if (addAdmin.isSuccess) {
+      const timer = setTimeout(() => {
+        addAdmin.reset();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [addAdmin.isSuccess]);
+
   const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAdminPrincipal.trim()) return;
@@ -50,6 +60,7 @@ export default function AdminsAdminPanel() {
       setAdminToRemove(null);
     } catch (error) {
       // Error is handled by mutation state
+      // Keep dialog open on error so user can see the error message
     }
   };
 
@@ -58,6 +69,9 @@ export default function AdminsAdminPanel() {
     setCopiedPrincipal(principal);
     setTimeout(() => setCopiedPrincipal(null), 2000);
   };
+
+  // Preemptively disable remove button for last admin (backend also enforces this)
+  const isLastAdmin = adminList.length === 1;
 
   return (
     <div className="space-y-6">
@@ -193,8 +207,9 @@ export default function AdminsAdminPanel() {
                           variant="ghost"
                           size="sm"
                           onClick={() => setAdminToRemove(principal)}
-                          disabled={removeAdmin.isPending}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          disabled={removeAdmin.isPending || isLastAdmin}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                          title={isLastAdmin ? 'Cannot remove the last administrator' : 'Remove administrator'}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -220,7 +235,15 @@ export default function AdminsAdminPanel() {
       </Card>
 
       {/* Remove Admin Confirmation Dialog */}
-      <AlertDialog open={!!adminToRemove} onOpenChange={(open) => !open && setAdminToRemove(null)}>
+      <AlertDialog open={!!adminToRemove} onOpenChange={(open) => {
+        if (!open) {
+          setAdminToRemove(null);
+          // Clear error state when dialog closes
+          if (removeAdmin.isError) {
+            removeAdmin.reset();
+          }
+        }
+      }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove Administrator</AlertDialogTitle>

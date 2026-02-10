@@ -1,86 +1,86 @@
 {
   "kind": "build_request",
-  "title": "Make Tripple Host deployment workflow reliable so the site can be published live to IC mainnet",
-  "priority": "high",
+  "title": "Fix missing Reviews visibility and restore reliable admin management experience",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-31",
-      "text": "Fix and complete the deployment documentation in frontend/DEPLOYMENT.md so a developer can follow it end-to-end to publish the latest Tripple Host build to Internet Computer mainnet (IC) without missing sections or broken Markdown formatting.",
+      "id": "REQ-38",
+      "text": "Ensure the Reviews (rating) section is discoverable from the main navigation by adding a visible navigation link to the existing landing-page Reviews section (id=\"reviews\") in both desktop and mobile header navigation.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-9"
+          "msg-15",
+          "msg-16"
         ],
         "quotes": [
-          "Live my website nowww"
+          "Where is rating thing and only 1 admin chamges",
+          "Updat codss"
         ]
       },
       "acceptanceCriteria": [
-        "frontend/DEPLOYMENT.md no longer ends abruptly and has valid Markdown (no unclosed code fences).",
-        "DEPLOYMENT.md includes a complete, ordered mainnet deployment section that references the existing scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh).",
-        "DEPLOYMENT.md explicitly states the expected working directory for running the scripts (or provides commands that work from the repo root).",
-        "DEPLOYMENT.md includes environment setup instructions that match frontend/.env.example, including setting DFX_NETWORK=ic and II_URL=https://identity.ic0.app for mainnet."
+        "On the landing page, the header navigation includes a \"Reviews\" link on desktop and in the mobile menu.",
+        "Clicking the \"Reviews\" nav link scrolls/navigates to the existing Reviews section (#reviews).",
+        "No user-facing navigation labels are hardcoded in Header.tsx; use the centralized copy config (frontend/src/content/siteCopy.ts) as the single source of truth for nav labels/targets where applicable."
       ]
     },
     {
-      "id": "REQ-32",
-      "text": "Harden the IC mainnet deployment scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh) so they are reliable to run and produce clear English output that guides the user to the live site URL.",
-      "target": "frontend",
+      "id": "REQ-39",
+      "text": "Fix/restore the admin allowlist management flow so that an admin can add additional admin principals and remove admins from the Admin Panel, with clear English success/error states and immediate UI refresh after changes.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-9"
+          "msg-15",
+          "msg-16"
         ],
         "quotes": [
-          "Live my website nowww"
+          "Where is rating thing and only 1 admin chamges",
+          "Updat codss"
         ]
       },
       "acceptanceCriteria": [
-        "deploy-ic.sh and verify-deploy.sh run successfully when executed as documented in DEPLOYMENT.md.",
-        "If the scripts must be run from a specific directory, they detect incorrect invocation location and exit with a clear English error message explaining how to run them correctly.",
-        "On success, deploy-ic.sh prints the frontend URL in the exact form https://<FRONTEND_CANISTER_ID>.ic0.app.",
-        "verify-deploy.sh checks canister status and frontend HTTP accessibility (when curl is available) and exits non-zero with an English explanation when a check fails."
+        "As an admin, opening the Admin Panel shows an Admin Management area that lists current admin principals.",
+        "As an admin, adding a valid principal ID succeeds and the new principal appears in the admin list without a manual page refresh.",
+        "As an admin, removing an admin principal succeeds and the removed principal disappears from the list without a manual page refresh.",
+        "Backend enforces admin-only access for viewing/modifying the admin list and returns clear English error messages for unauthorized access.",
+        "Backend prevents removing the last remaining admin and returns a clear English error message that the UI can display."
       ]
     },
     {
-      "id": "REQ-33",
-      "text": "Ensure the live (mainnet) deployment verification checklist in documentation and/or scripts includes the critical functional smoke tests for this app (landing page loads, Internet Identity login works, admin setup claim works only when no admins exist, and admin panel opens for admins).",
+      "id": "REQ-40",
+      "text": "Make admin availability and access state easier to understand for signed-in users by ensuring the header shows the correct admin entry points based on backend state: show “Set up admin access” only when and only when no admins exist yet, and show “Admin” only for admins.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-9"
+          "msg-12",
+          "msg-15",
+          "msg-16"
         ],
         "quotes": [
-          "Live my website nowww"
+          "I am not able to see any go live option here",
+          "Where is rating thing and only 1 admin chamges",
+          "Updat codss"
         ]
       },
       "acceptanceCriteria": [
-        "The documented manual verification steps explicitly include: open the deployed URL, verify no console errors on load, complete Internet Identity login/logout, claim initial admin access when no admins exist, and open the Admin Panel after admin claim.",
-        "All user-facing text added/updated in docs/scripts is in English."
+        "When the user is signed in and the backend reports no admins exist, the header shows a “Set up admin access” button.",
+        "When the backend reports admins exist, the “Set up admin access” button is not shown.",
+        "When the signed-in user is an admin, the header shows an “Admin” button that opens the Admin Panel.",
+        "When the signed-in user is not an admin, the header does not show the “Admin” button."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files in frontend/src/components/ui (read-only shadcn components).",
-    "Do not change the backend architecture (single Motoko actor in backend/main.mo).",
-    "Do not introduce third-party hosting or deployment platforms; deployment must target Internet Computer mainnet via dfx."
+    "Do not modify files under frontend/src/components/ui (read-only UI components must be composed, not edited).",
+    "Do not edit immutable auth/actor bootstrap hooks: frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
+    "Backend must remain a single Motoko actor in backend/main.mo; introduce backend/migration.mo only if a state upgrade is required."
   ],
   "nonGoals": [
-    "Adding new application features unrelated to deployment.",
-    "Implementing non-IC hosting (AWS/Vercel/Netlify/etc.).",
-    "Changing pricing/admin/CMS behavior beyond what is required for deployment verification."
+    "Adding new authentication providers beyond Internet Identity.",
+    "Implementing real-time updates via WebSockets or third-party services.",
+    "Changing the overall landing page section order beyond making the existing Reviews section discoverable via navigation."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

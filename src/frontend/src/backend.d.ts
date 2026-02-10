@@ -14,6 +14,11 @@ export class ExternalBlob {
     static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
     withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
 }
+export interface Review {
+    comment?: string;
+    timestamp: bigint;
+    rating: bigint;
+}
 export interface SiteSettings {
     footerTagline: string;
     footerSupport: string;
@@ -35,6 +40,10 @@ export interface SiteSettings {
     heroTitle: string;
 }
 export type AdminPrincipal = string;
+export interface ReviewSummary {
+    totalCount: bigint;
+    averageRating: number;
+}
 export interface EditableSettings {
     footerTagline?: string;
     footerSupport?: string;
@@ -76,6 +85,7 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     claimAdminIfNoneExist(adminToken: string, userProvidedToken: string): Promise<boolean>;
     createPricingPlan(name: string, description: string, priceCents: bigint, durationDays: bigint, features: Array<string>): Promise<bigint>;
+    createReview(rating: bigint, comment: string | null): Promise<void>;
     deletePricingPlan(id: bigint): Promise<void>;
     doesAdminExist(): Promise<boolean>;
     getAdminList(): Promise<Array<AdminPrincipal>>;
@@ -84,6 +94,8 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getLogo(): Promise<ExternalBlob | null>;
     getPricingPlan(id: bigint): Promise<PricingPlan | null>;
+    getRecentReviews(limit: bigint): Promise<Array<Review>>;
+    getReviewSummary(): Promise<ReviewSummary>;
     getSiteSettings(): Promise<SiteSettings>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Header from '../components/landing/Header';
 import Hero from '../components/landing/Hero';
-import { Features, Stats, Pricing, FAQ, FinalCTA } from '../components/landing/Sections';
+import { Features, Stats, Pricing, Reviews, FAQ, FinalCTA } from '../components/landing/Sections';
 import Footer from '../components/landing/Footer';
 import AdminPanel from '../components/admin/AdminPanel';
 import AdminAccessDenied from '../components/admin/AdminAccessDenied';
@@ -25,6 +25,7 @@ export default function LandingPage() {
       <Stats />
       <Features />
       <Pricing />
+      <Reviews />
       <FAQ />
       <FinalCTA />
       <Footer />

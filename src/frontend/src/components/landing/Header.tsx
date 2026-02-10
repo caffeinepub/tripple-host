@@ -61,11 +61,11 @@ export default function Header({ onAdminClick }: HeaderProps) {
     }
   };
 
-  const navLinks = [
-    { label: 'Features', href: '#features' },
-    { label: 'Pricing', href: '#pricing' },
-    { label: 'FAQ', href: '#faq' },
-  ];
+  // Derive navigation links from centralized siteCopy.nav
+  const navLinks = siteCopy.nav.map((item) => ({
+    label: item.label,
+    href: `#${item.id}`,
+  }));
 
   return (
     <>

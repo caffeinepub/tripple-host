@@ -1,11 +1,15 @@
-import { Check, Server, Zap, Shield, Globe, Users, Clock, HeadphonesIcon, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Check, Server, Zap, Shield, Globe, Users, Clock, HeadphonesIcon, AlertCircle, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { siteCopy } from '../../content/siteCopy';
-import { useGetAllPricingPlans, useGetSiteSettings } from '../../hooks/useQueries';
+import { useGetAllPricingPlans, useGetSiteSettings, useGetReviewSummary, useGetRecentReviews, useCreateReview } from '../../hooks/useQueries';
+import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import { mergeSiteSettings } from '../../utils/siteSettings';
 import ScrollReveal from './ScrollReveal';
 
@@ -188,6 +192,199 @@ export function Pricing() {
             </ScrollReveal>
           </>
         )}
+      </div>
+    </section>
+  );
+}
+
+export function Reviews() {
+  const { identity } = useInternetIdentity();
+  const { data: summary } = useGetReviewSummary();
+  const { data: recentReviews = [] } = useGetRecentReviews(5);
+  const createReview = useCreateReview();
+
+  const [rating, setRating] = useState<number>(0);
+  const [hoveredRating, setHoveredRating] = useState<number>(0);
+  const [comment, setComment] = useState('');
+  const [validationError, setValidationError] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const isAuthenticated = !!identity;
+
+  const handleSubmit = async () => {
+    setValidationError('');
+    setShowSuccess(false);
+
+    if (rating === 0) {
+      setValidationError(siteCopy.reviews.validationError);
+      return;
+    }
+
+    try {
+      await createReview.mutateAsync({ rating, comment: comment.trim() || undefined });
+      setShowSuccess(true);
+      setRating(0);
+      setComment('');
+      setTimeout(() => setShowSuccess(false), 5000);
+    } catch (error: any) {
+      setValidationError(error.message || siteCopy.reviews.errorMessage);
+    }
+  };
+
+  const renderStars = (count: number, interactive: boolean = false) => {
+    return (
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            disabled={!interactive}
+            onClick={() => interactive && setRating(star)}
+            onMouseEnter={() => interactive && setHoveredRating(star)}
+            onMouseLeave={() => interactive && setHoveredRating(0)}
+            className={`${interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'} transition-transform`}
+          >
+            <Star
+              className={`h-6 w-6 ${
+                star <= (interactive ? (hoveredRating || rating) : count)
+                  ? 'fill-amber-400 text-amber-400'
+                  : 'text-gray-300 dark:text-gray-600'
+              }`}
+            />
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const totalCount = Number(summary?.totalCount || 0);
+  const averageRating = summary?.averageRating || 0;
+
+  return (
+    <section id="reviews" className="py-16 md:py-24 bg-accent/10">
+      <div className="container mx-auto px-4">
+        <ScrollReveal>
+          <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">{siteCopy.reviews.title}</h2>
+            <p className="text-lg text-muted-foreground">{siteCopy.reviews.subtitle}</p>
+          </div>
+        </ScrollReveal>
+
+        <div className="max-w-4xl mx-auto">
+          {/* Summary */}
+          {totalCount > 0 && (
+            <ScrollReveal delay={0.1}>
+              <Card className="mb-8">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+                    <div className="text-center">
+                      <div className="text-5xl font-bold text-primary mb-2">
+                        {averageRating.toFixed(1)}
+                      </div>
+                      <div className="flex justify-center mb-2">
+                        {renderStars(Math.round(averageRating))}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {siteCopy.reviews.basedOn.replace('{count}', totalCount.toString())}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </ScrollReveal>
+          )}
+
+          {/* Recent Reviews */}
+          {recentReviews.length > 0 && (
+            <ScrollReveal delay={0.2}>
+              <div className="mb-8 space-y-4">
+                <h3 className="text-xl font-semibold mb-4">{siteCopy.reviews.recentReviewsTitle}</h3>
+                {recentReviews.map((review, index) => (
+                  <Card key={index}>
+                    <CardContent className="pt-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0">
+                          {renderStars(Number(review.rating))}
+                        </div>
+                        <div className="flex-grow">
+                          {review.comment && (
+                            <p className="text-muted-foreground">{review.comment}</p>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </ScrollReveal>
+          )}
+
+          {/* Submit Review Form */}
+          <ScrollReveal delay={0.3}>
+            <Card>
+              <CardHeader>
+                <CardTitle>{siteCopy.reviews.formTitle}</CardTitle>
+                <CardDescription>{siteCopy.reviews.formDescription}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {!isAuthenticated && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{siteCopy.reviews.loginRequired}</AlertDescription>
+                  </Alert>
+                )}
+
+                <div>
+                  <Label htmlFor="rating" className="mb-2 block">
+                    {siteCopy.reviews.ratingLabel}
+                  </Label>
+                  {renderStars(rating, isAuthenticated)}
+                </div>
+
+                <div>
+                  <Label htmlFor="comment" className="mb-2 block">
+                    {siteCopy.reviews.commentLabel}
+                  </Label>
+                  <Textarea
+                    id="comment"
+                    placeholder={siteCopy.reviews.commentPlaceholder}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    disabled={!isAuthenticated || createReview.isPending}
+                    rows={4}
+                    className="resize-none"
+                  />
+                </div>
+
+                {validationError && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{validationError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {showSuccess && (
+                  <Alert className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+                    <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <AlertDescription className="text-green-800 dark:text-green-200">
+                      {siteCopy.reviews.successMessage}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+              <CardFooter>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!isAuthenticated || createReview.isPending}
+                  className="w-full"
+                  size="lg"
+                >
+                  {createReview.isPending ? siteCopy.reviews.submittingButton : siteCopy.reviews.submitButton}
+                </Button>
+              </CardFooter>
+            </Card>
+          </ScrollReveal>
+        </div>
       </div>
     </section>
   );

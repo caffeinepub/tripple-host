@@ -1,12 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Make Tripple Host’s Internet Computer (IC) mainnet deployment workflow reliable, fully documented, and easy to verify end-to-end.
+**Goal:** Make the Reviews section easy to find from the header navigation and restore a reliable admin management experience with correct admin entry points in the header.
 
 **Planned changes:**
-- Fix and complete `frontend/DEPLOYMENT.md` so it is valid, non-abrupt Markdown and provides an ordered, end-to-end mainnet deployment flow referencing `frontend/scripts/deploy-ic.sh` and `frontend/scripts/verify-deploy.sh`.
-- Update `frontend/DEPLOYMENT.md` to clearly state where commands/scripts must be run from (or provide repo-root commands that work as written) and include environment setup aligned with `frontend/.env.example` (including `DFX_NETWORK=ic` and `II_URL=https://identity.ic0.app`).
-- Harden `frontend/scripts/deploy-ic.sh` and `frontend/scripts/verify-deploy.sh` to be reliable when run as documented, detect incorrect invocation directory with clear English errors, and provide clear English success/failure output.
-- Ensure deployment output and verification guidance includes: printing the live frontend URL as `https://<FRONTEND_CANISTER_ID>.ic0.app`, verifying canister status and HTTP accessibility (when `curl` is available), and documenting critical manual smoke tests (landing page load/no console errors, Internet Identity login/logout, initial admin claim only when no admins exist, and Admin Panel access for admins).
+- Add a visible “Reviews” navigation link to both desktop and mobile header navigation that navigates/scrolls to the existing landing page section with id="reviews", using centralized copy config (frontend/src/content/siteCopy.ts) for labels/targets rather than hardcoding in Header.tsx.
+- Fix/restore the admin allowlist management in the Admin Panel so admins can view current admin principals, add a new principal, and remove an existing principal with clear English success/error messages and immediate UI refresh after each change.
+- Update header admin entry points to reflect backend state: show “Set up admin access” only when no admins exist yet; show “Admin” only to signed-in admins; hide these options when conditions are not met.
 
-**User-visible outcome:** A developer can follow `frontend/DEPLOYMENT.md` to deploy the latest Tripple Host build to IC mainnet, run verification checks, see the exact live site URL, and complete the required smoke tests to confirm the deployment works.
+**User-visible outcome:** Users can reach the landing-page Reviews section from the header on desktop and mobile, and admins can reliably manage admin access (add/remove/list) with immediate updates while the header shows the correct admin/setup actions based on actual backend admin state.

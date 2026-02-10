@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 25,
+  "projectStateVersion": 31,
   "summary": "Create a website similar to https://stranger-nodes-55e.caffeine.xyz/ named \"tripple host\", with full website customization capabilities (not only pricing) plus user login, and enforce a single permanent admin identity for the whole site.",
   "architectural_notes": [
     "Add authenticated admin interface to edit site content and manage pricing plans (create/update/delete), rather than hardcoded-only plans.",
@@ -15,7 +15,9 @@
     "Admin option/access appears to be removed in the live app, preventing the user from adding pricing plans and making site changes via the admin UI.",
     "Version 8 is missing functionality that existed in Version 7; user requests restoring/adding all Version 7 features into the current version.",
     "Potential mismatch: Internet Identity authentication is principal-based and does not reliably provide/lock to an email (e.g., Upgamer4303@gmail.com); need a concrete method to bind the 'single admin' to an II principal.",
-    "Deployment/build attempt to \"make website live\" failed with an error (AI unable to complete request); live publish workflow may be unreliable or unclear."
+    "Deployment/build attempt to \"make website live\" failed with an error (AI unable to complete request); live publish workflow may be unreliable or unclear.",
+    "Reviews/rating section expected by user is not visible on the live site (may be missing from landing page layout or deployment/caching mismatch).",
+    "User reports the 'live' (latest deployed) version is not reflecting recent code changes in the site and in the in-chat live preview."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -258,6 +260,54 @@
         "REQ-33"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-new-reviews-section-to-the-landing-page-that-appears-after-the-pricing-plans-section-and-before-the-faq-section-allowing-visitors-to-rate-the-service-using-a-1-5-star-control-and-optionally-leave-a-short-text-review",
+      "title": "Add a new \"Reviews\" section to the landing page that appears after the Pricing/Plans section and before the FAQ section, allowing visitors to rate the service using a 1–5 star control and optionally leave a short text review.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-new-reviews-section-ui-to-the-backend-using-react-query-fetch-and-display-the-current-review-summary-average-stars-and-total-count-and-display-a-short-list-of-recent-reviews-after-a-user-submits-a-review-invalidate-refetch-the-relevant-queries-so-the-summary-and-recent-list-update-immediately",
+      "title": "Wire the new Reviews section UI to the backend using React Query: fetch and display the current review summary (average stars and total count) and display a short list of recent reviews; after a user submits a review, invalidate/refetch the relevant queries so the summary and recent list update immediately.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-reviews-section-s-static-copy-section-title-subtitle-helper-text-field-labels-and-success-validation-messages-to-the-centralized-frontend-copy-config-frontend-src-content-sitecopy-ts-and-render-it-from-there-do-not-hardcode-english-strings-directly-inside-the-reviews-ui-components",
+      "title": "Add the Reviews section’s static copy (section title, subtitle/helper text, field labels, and success/validation messages) to the centralized frontend copy config (frontend/src/content/siteCopy.ts) and render it from there (do not hardcode English strings directly inside the Reviews UI components).",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-reviews-rating-section-is-discoverable-from-the-main-navigation-by-adding-a-visible-navigation-link-to-the-existing-landing-page-reviews-section-id-reviews-in-both-desktop-and-mobile-header-navigation",
+      "title": "Ensure the Reviews (rating) section is discoverable from the main navigation by adding a visible navigation link to the existing landing-page Reviews section (id=\"reviews\") in both desktop and mobile header navigation.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-restore-the-admin-allowlist-management-flow-so-that-an-admin-can-add-additional-admin-principals-and-remove-admins-from-the-admin-panel-with-clear-english-success-error-states-and-immediate-ui-refresh-after-changes",
+      "title": "Fix/restore the admin allowlist management flow so that an admin can add additional admin principals and remove admins from the Admin Panel, with clear English success/error states and immediate UI refresh after changes.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-admin-availability-and-access-state-easier-to-understand-for-signed-in-users-by-ensuring-the-header-shows-the-correct-admin-entry-points-based-on-backend-state-show-set-up-admin-access-only-when-and-only-when-no-admins-exist-yet-and-show-admin-only-for-admins",
+      "title": "Make admin availability and access state easier to understand for signed-in users by ensuring the header shows the correct admin entry points based on backend state: show “Set up admin access” only when and only when no admins exist yet, and show “Admin” only for admins.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -373,6 +423,20 @@
       "id": "AR-18",
       "summary": "Publish/deploy the app (make the latest build live).",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Add a review/rating stars section at the end of the landing page after the Plans/Pricing section so visitors can rate/review the service.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Extend the Motoko backend actor (backend/main.mo) to store and serve visitor reviews, including a public method to submit a review (rating 1–5, optional comment) and public query methods to fetch a review summary (average rating + total count) and a small list of the most recent reviews.",
+      "reqIds": [
+        "REQ-35"
+      ],
       "status": "pending"
     }
   ],

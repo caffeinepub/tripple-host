@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-fix-and-complete-the-deployment-documentation-in-frontend-deployment-md-so-a-developer-can-follow-it-end-to-end-to-publish-the-latest-tripple-host-build-to-internet-computer-mainnet-ic-without-missing-sections-or-broken-markdown-formatting",
-      "featureTitle": "Fix and complete the deployment documentation in frontend/DEPLOYMENT.md so a developer can follow it end-to-end to publish the latest Tripple Host build to Internet Computer mainnet (IC) without missing sections or broken Markdown formatting.",
+      "featureId": "feature-ensure-the-reviews-rating-section-is-discoverable-from-the-main-navigation-by-adding-a-visible-navigation-link-to-the-existing-landing-page-reviews-section-id-reviews-in-both-desktop-and-mobile-header-navigation",
+      "featureTitle": "Ensure the Reviews (rating) section is discoverable from the main navigation by adding a visible navigation link to the existing landing-page Reviews section (id=\"reviews\") in both desktop and mobile header navigation.",
       "files": [
-        "frontend/DEPLOYMENT.md"
+        "frontend/src/components/landing/Header.tsx",
+        "frontend/src/content/siteCopy.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -17,16 +18,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-31"
+        "REQ-38"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-harden-the-ic-mainnet-deployment-scripts-frontend-scripts-deploy-ic-sh-and-frontend-scripts-verify-deploy-sh-so-they-are-reliable-to-run-and-produce-clear-english-output-that-guides-the-user-to-the-live-site-url",
-      "featureTitle": "Harden the IC mainnet deployment scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh) so they are reliable to run and produce clear English output that guides the user to the live site URL.",
+      "featureId": "feature-fix-restore-the-admin-allowlist-management-flow-so-that-an-admin-can-add-additional-admin-principals-and-remove-admins-from-the-admin-panel-with-clear-english-success-error-states-and-immediate-ui-refresh-after-changes",
+      "featureTitle": "Fix/restore the admin allowlist management flow so that an admin can add additional admin principals and remove admins from the Admin Panel, with clear English success/error states and immediate UI refresh after changes.",
       "files": [
-        "frontend/scripts/deploy-ic.sh",
-        "frontend/scripts/verify-deploy.sh"
+        "frontend/src/components/admin/AdminsAdminPanel.tsx",
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -38,16 +39,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-32"
+        "REQ-39"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-live-mainnet-deployment-verification-checklist-in-documentation-and-or-scripts-includes-the-critical-functional-smoke-tests-for-this-app-landing-page-loads-internet-identity-login-works-admin-setup-claim-works-only-when-no-admins-exist-and-admin-panel-opens-for-admins",
-      "featureTitle": "Ensure the live (mainnet) deployment verification checklist in documentation and/or scripts includes the critical functional smoke tests for this app (landing page loads, Internet Identity login works, admin setup claim works only when no admins exist, and admin panel opens for admins).",
+      "featureId": "feature-make-admin-availability-and-access-state-easier-to-understand-for-signed-in-users-by-ensuring-the-header-shows-the-correct-admin-entry-points-based-on-backend-state-show-set-up-admin-access-only-when-and-only-when-no-admins-exist-yet-and-show-admin-only-for-admins",
+      "featureTitle": "Make admin availability and access state easier to understand for signed-in users by ensuring the header shows the correct admin entry points based on backend state: show “Set up admin access” only when and only when no admins exist yet, and show “Admin” only for admins.",
       "files": [
-        "frontend/DEPLOYMENT.md",
-        "frontend/scripts/verify-deploy.sh"
+        "frontend/src/components/landing/Header.tsx",
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -59,7 +60,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-33"
+        "REQ-40"
       ],
       "confidence": "high"
     }

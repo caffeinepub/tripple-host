@@ -35,6 +35,15 @@ export const PricingPlan = IDL.Record({
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const Review = IDL.Record({
+  'comment' : IDL.Opt(IDL.Text),
+  'timestamp' : IDL.Int,
+  'rating' : IDL.Nat,
+});
+export const ReviewSummary = IDL.Record({
+  'totalCount' : IDL.Nat,
+  'averageRating' : IDL.Float64,
+});
 export const SiteSettings = IDL.Record({
   'footerTagline' : IDL.Text,
   'footerSupport' : IDL.Text,
@@ -112,6 +121,7 @@ export const idlService = IDL.Service({
       [IDL.Nat],
       [],
     ),
+  'createReview' : IDL.Func([IDL.Nat, IDL.Opt(IDL.Text)], [], []),
   'deletePricingPlan' : IDL.Func([IDL.Nat], [], []),
   'doesAdminExist' : IDL.Func([], [IDL.Bool], ['query']),
   'getAdminList' : IDL.Func([], [IDL.Vec(AdminPrincipal)], ['query']),
@@ -120,6 +130,8 @@ export const idlService = IDL.Service({
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getLogo' : IDL.Func([], [IDL.Opt(ExternalBlob)], ['query']),
   'getPricingPlan' : IDL.Func([IDL.Nat], [IDL.Opt(PricingPlan)], ['query']),
+  'getRecentReviews' : IDL.Func([IDL.Nat], [IDL.Vec(Review)], ['query']),
+  'getReviewSummary' : IDL.Func([], [ReviewSummary], ['query']),
   'getSiteSettings' : IDL.Func([], [SiteSettings], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -168,6 +180,15 @@ export const idlFactory = ({ IDL }) => {
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const Review = IDL.Record({
+    'comment' : IDL.Opt(IDL.Text),
+    'timestamp' : IDL.Int,
+    'rating' : IDL.Nat,
+  });
+  const ReviewSummary = IDL.Record({
+    'totalCount' : IDL.Nat,
+    'averageRating' : IDL.Float64,
+  });
   const SiteSettings = IDL.Record({
     'footerTagline' : IDL.Text,
     'footerSupport' : IDL.Text,
@@ -245,6 +266,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Nat],
         [],
       ),
+    'createReview' : IDL.Func([IDL.Nat, IDL.Opt(IDL.Text)], [], []),
     'deletePricingPlan' : IDL.Func([IDL.Nat], [], []),
     'doesAdminExist' : IDL.Func([], [IDL.Bool], ['query']),
     'getAdminList' : IDL.Func([], [IDL.Vec(AdminPrincipal)], ['query']),
@@ -253,6 +275,8 @@ export const idlFactory = ({ IDL }) => {
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getLogo' : IDL.Func([], [IDL.Opt(ExternalBlob)], ['query']),
     'getPricingPlan' : IDL.Func([IDL.Nat], [IDL.Opt(PricingPlan)], ['query']),
+    'getRecentReviews' : IDL.Func([IDL.Nat], [IDL.Vec(Review)], ['query']),
+    'getReviewSummary' : IDL.Func([], [ReviewSummary], ['query']),
     'getSiteSettings' : IDL.Func([], [SiteSettings], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
