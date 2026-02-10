@@ -44,7 +44,7 @@ export function useCheckAdminsExist() {
   });
 }
 
-// Claim first admin role (bootstrap)
+// Claim first admin role (bootstrap) - uses backend-enforced claimAdminIfNoneExist
 export function useClaimFirstAdmin() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -56,16 +56,28 @@ export function useClaimFirstAdmin() {
       if (!identity) throw new Error('Must be signed in to claim admin role');
       
       try {
-        // Assign admin role to caller
-        await actor.assignCallerUserRole(identity.getPrincipal(), 'admin' as UserRole);
+        // Use backend-enforced claim method with empty tokens (authorization mixin handles initialization)
+        await actor.claimAdminIfNoneExist('', '');
       } catch (error: any) {
-        if (error.message?.includes('Unauthorized') || error.message?.includes('already')) {
-          throw new Error('Admin access has already been claimed. Please contact an existing administrator.');
+        // Extract clear error message from backend
+        const errorMessage = error.message || '';
+        
+        if (errorMessage.includes('Admin privileges cannot be claimed after setup')) {
+          throw new Error('Admin privileges cannot be claimed after setup. Please contact an existing administrator for access.');
+        }
+        if (errorMessage.includes('Unauthorized') || errorMessage.includes('authenticated')) {
+          throw new Error('You must be signed in to claim admin access.');
         }
         throw new Error('Failed to set up admin access. Please try again.');
       }
     },
     onSuccess: () => {
+      // Optimistically set isAdmin to true for immediate UI update
+      const principalStr = identity?.getPrincipal().toString();
+      if (principalStr) {
+        queryClient.setQueryData(['isAdmin', principalStr], true);
+      }
+      
       // Invalidate all admin-related queries to refresh UI
       queryClient.invalidateQueries({ queryKey: ['isAdmin'] });
       queryClient.invalidateQueries({ queryKey: ['adminsExist'] });

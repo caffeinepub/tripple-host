@@ -1,93 +1,73 @@
 {
   "kind": "build_request",
-  "title": "Restore Version 7 functionality into current Version 8 (admin access, bootstrap, allowlist management, and CTA label parity)",
+  "title": "Make Tripple Host deployment workflow reliable so the site can be published live to IC mainnet",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-25",
-      "text": "Restore all end-user and admin-facing functionality that existed in Version 7 but is missing or broken in the current Version 8 build, prioritizing the admin entry/access experience so admins can again manage pricing plans, site content customization, and logo uploads from the website UI.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "Add all things that are in version 7"
-        ]
-      },
-      "acceptanceCriteria": [
-        "When signed in as an admin principal, the Header shows an Admin entry point and the Admin Panel opens successfully.",
-        "When signed in and no admins exist yet, the UI offers the Admin Setup flow and successfully transitions the user into an admin state after claiming the first admin role.",
-        "The Admin Panel includes working management areas for (1) pricing plans CRUD, (2) site content customization, and (3) logo upload/replace, with clear English success/error states.",
-        "Non-admin signed-in users can still access the non-admin user login experience (visible logged-in state + profile create/update) without being blocked by admin logic.",
-        "If a signed-in non-admin attempts to access admin functionality, the AdminAccessDenied UI appears with a clear English explanation (including guidance to contact an administrator if admins already exist)."
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "text": "Implement a reliable, explicit “do any admins exist” check in the Motoko backend and update the frontend to use it so that admin bootstrap and Admin button visibility cannot regress due to heuristic client-side logic.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "Add all things that are in version 7"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend exposes a public query that returns whether at least one admin exists (e.g., `adminsExist : async Bool`), without requiring caller to be admin.",
-        "frontend/src/hooks/useQueries.ts `useCheckAdminsExist` uses the new backend query instead of the current heuristic/proxy approach.",
-        "Header logic shows “Set up admin access” only when the backend indicates no admins exist, and shows “Admin” only when the caller is an admin, with no false negatives caused by loading/identity state.",
-        "The live app no longer silently hides admin capabilities due to an incorrect `adminsExist` value."
-      ]
-    },
-    {
-      "id": "REQ-27",
-      "text": "Restore/implement website-based admin allowlist management (Version 7 parity): provide an admin UI to view the current admin list and add/remove admin principals, persisted and enforced by the backend (admin-only write; safe read access as appropriate).",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "Add all things that are in version 7"
-        ]
-      },
-      "acceptanceCriteria": [
-        "An admin can open the Admin Panel and access an “Admins” (or equivalent) management section.",
-        "The admin UI supports adding an admin principal and removing an admin principal, with basic validation and clear English success/error messages.",
-        "Changes persist in the backend and immediately affect authorization (a newly added admin sees the Admin button after refresh/relogin; a removed admin loses admin-only capabilities).",
-        "Non-admin users cannot modify the admin list; backend rejects such attempts with a clear unauthorized error."
-      ]
-    },
-    {
-      "id": "REQ-28",
-      "text": "Rename the site-wide “Talk to Sales” label to “Purchase Plans” while keeping the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
+      "id": "REQ-31",
+      "text": "Fix and complete the deployment documentation in frontend/DEPLOYMENT.md so a developer can follow it end-to-end to publish the latest Tripple Host build to Internet Computer mainnet (IC) without missing sections or broken Markdown formatting.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-9"
         ],
         "quotes": [
-          "Add all things that are in version 7"
+          "Live my website nowww"
         ]
       },
       "acceptanceCriteria": [
-        "All user-visible occurrences of the “Talk to Sales” label are changed to “Purchase Plans” in English.",
-        "Clicking “Purchase Plans” still opens https://discord.gg/NMcBdXYVFe in a new browser tab (no behavior regression).",
-        "Any centralized copy/config (e.g., frontend/src/content/siteCopy.ts and/or backend settings where applicable) remains the single source of truth for the label."
+        "frontend/DEPLOYMENT.md no longer ends abruptly and has valid Markdown (no unclosed code fences).",
+        "DEPLOYMENT.md includes a complete, ordered mainnet deployment section that references the existing scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh).",
+        "DEPLOYMENT.md explicitly states the expected working directory for running the scripts (or provides commands that work from the repo root).",
+        "DEPLOYMENT.md includes environment setup instructions that match frontend/.env.example, including setting DFX_NETWORK=ic and II_URL=https://identity.ic0.app for mainnet."
+      ]
+    },
+    {
+      "id": "REQ-32",
+      "text": "Harden the IC mainnet deployment scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh) so they are reliable to run and produce clear English output that guides the user to the live site URL.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-9"
+        ],
+        "quotes": [
+          "Live my website nowww"
+        ]
+      },
+      "acceptanceCriteria": [
+        "deploy-ic.sh and verify-deploy.sh run successfully when executed as documented in DEPLOYMENT.md.",
+        "If the scripts must be run from a specific directory, they detect incorrect invocation location and exit with a clear English error message explaining how to run them correctly.",
+        "On success, deploy-ic.sh prints the frontend URL in the exact form https://<FRONTEND_CANISTER_ID>.ic0.app.",
+        "verify-deploy.sh checks canister status and frontend HTTP accessibility (when curl is available) and exits non-zero with an English explanation when a check fails."
+      ]
+    },
+    {
+      "id": "REQ-33",
+      "text": "Ensure the live (mainnet) deployment verification checklist in documentation and/or scripts includes the critical functional smoke tests for this app (landing page loads, Internet Identity login works, admin setup claim works only when no admins exist, and admin panel opens for admins).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-9"
+        ],
+        "quotes": [
+          "Live my website nowww"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The documented manual verification steps explicitly include: open the deployed URL, verify no console errors on load, complete Internet Identity login/logout, claim initial admin access when no admins exist, and open the Admin Panel after admin claim.",
+        "All user-facing text added/updated in docs/scripts is in English."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo (no additional backend services).",
-    "Do not modify frontend files under the immutable paths listed in SYSTEM_CONTEXT (compose them instead).",
-    "All user-facing text must be in English."
+    "Do not edit files in frontend/src/components/ui (read-only shadcn components).",
+    "Do not change the backend architecture (single Motoko actor in backend/main.mo).",
+    "Do not introduce third-party hosting or deployment platforms; deployment must target Internet Computer mainnet via dfx."
   ],
   "nonGoals": [
-    "Adding new product features beyond restoring Version 7 functionality (no new sections or unrelated capabilities).",
-    "Introducing third-party authentication beyond Internet Identity."
+    "Adding new application features unrelated to deployment.",
+    "Implementing non-IC hosting (AWS/Vercel/Netlify/etc.).",
+    "Changing pricing/admin/CMS behavior beyond what is required for deployment verification."
   ],
   "imageRequirements": {
     "required": [],

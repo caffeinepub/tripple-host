@@ -1,100 +1,62 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T08:29:08.316Z",
+  "generatedAt": "2026-02-10T09:24:33.065Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 4,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-25",
-        "summary": "Restore all end-user and admin-facing functionality that existed in Version 7 but is missing or broken in the current Version 8 build, prioritizing the admin entry/access experience so admins can again manage pricing plans, site content customization, and logo uploads from the website UI.",
+        "id": "REQ-31",
+        "summary": "Fix and complete the deployment documentation in frontend/DEPLOYMENT.md so a developer can follow it end-to-end to publish the latest Tripple Host build to Internet Computer mainnet (IC) without missing sections or broken Markdown formatting.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/landing/Header.tsx",
-          "frontend/src/pages/LandingPage.tsx",
-          "frontend/src/components/admin/AdminPanel.tsx",
-          "frontend/src/components/admin/AdminSetupDialog.tsx",
-          "frontend/src/components/admin/AdminAccessDenied.tsx",
-          "frontend/src/hooks/useInternetIdentity.ts"
+          "frontend/DEPLOYMENT.md"
         ],
         "matchedFiles": [
-          "frontend/src/components/landing/Header.tsx",
-          "frontend/src/pages/LandingPage.tsx",
-          "frontend/src/components/admin/AdminPanel.tsx",
-          "frontend/src/components/admin/AdminSetupDialog.tsx"
+          "frontend/DEPLOYMENT.md"
         ]
       },
       {
-        "id": "REQ-26",
-        "summary": "Implement a reliable, explicit “do any admins exist” check in the Motoko backend and update the frontend to use it so that admin bootstrap and Admin button visibility cannot regress due to heuristic client-side logic.",
+        "id": "REQ-32",
+        "summary": "Harden the IC mainnet deployment scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh) so they are reliable to run and produce clear English output that guides the user to the live site URL.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/landing/Header.tsx",
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/scripts/deploy-ic.sh",
+          "frontend/scripts/verify-deploy.sh"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/landing/Header.tsx",
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/scripts/deploy-ic.sh",
+          "frontend/scripts/verify-deploy.sh"
         ]
       },
       {
-        "id": "REQ-27",
-        "summary": "Restore/implement website-based admin allowlist management (Version 7 parity): provide an admin UI to view the current admin list and add/remove admin principals, persisted and enforced by the backend (admin-only write; safe read access as appropriate).",
+        "id": "REQ-33",
+        "summary": "Ensure the live (mainnet) deployment verification checklist in documentation and/or scripts includes the critical functional smoke tests for this app (landing page loads, Internet Identity login works, admin setup claim works only when no admins exist, and admin panel opens for admins).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/AdminsAdminPanel.tsx",
-          "frontend/src/components/admin/AdminPanel.tsx",
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/DEPLOYMENT.md",
+          "frontend/scripts/verify-deploy.sh"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/AdminsAdminPanel.tsx",
-          "frontend/src/components/admin/AdminPanel.tsx",
-          "frontend/src/pages/LandingPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-28",
-        "summary": "Rename the site-wide “Talk to Sales” label to “Purchase Plans” while keeping the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/content/siteCopy.ts",
-          "frontend/src/utils/siteSettings.ts",
-          "frontend/src/components/landing/Sections.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/content/siteCopy.ts",
-          "frontend/src/components/landing/Sections.tsx"
+          "frontend/DEPLOYMENT.md",
+          "frontend/scripts/verify-deploy.sh"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/admin/AdminPanel.tsx",
-    "frontend/src/components/admin/AdminSetupDialog.tsx",
-    "frontend/src/components/admin/AdminsAdminPanel.tsx",
-    "frontend/src/components/landing/Header.tsx",
-    "frontend/src/components/landing/Sections.tsx",
-    "frontend/src/content/siteCopy.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/LandingPage.tsx",
+    "frontend/DEPLOYMENT.md",
+    "frontend/scripts/deploy-ic.sh",
+    "frontend/scripts/verify-deploy.sh",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

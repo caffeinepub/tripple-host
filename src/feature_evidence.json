@@ -2,13 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-restore-all-end-user-and-admin-facing-functionality-that-existed-in-version-7-but-is-missing-or-broken-in-the-current-version-8-build-prioritizing-the-admin-entry-access-experience-so-admins-can-again-manage-pricing-plans-site-content-customization-and-logo-uploads-from-the-website-ui",
-      "featureTitle": "Restore all end-user and admin-facing functionality that existed in Version 7 but is missing or broken in the current Version 8 build, prioritizing the admin entry/access experience so admins can again manage pricing plans, site content customization, and logo uploads from the website UI.",
+      "featureId": "feature-fix-and-complete-the-deployment-documentation-in-frontend-deployment-md-so-a-developer-can-follow-it-end-to-end-to-publish-the-latest-tripple-host-build-to-internet-computer-mainnet-ic-without-missing-sections-or-broken-markdown-formatting",
+      "featureTitle": "Fix and complete the deployment documentation in frontend/DEPLOYMENT.md so a developer can follow it end-to-end to publish the latest Tripple Host build to Internet Computer mainnet (IC) without missing sections or broken Markdown formatting.",
       "files": [
-        "frontend/src/components/admin/AdminPanel.tsx",
-        "frontend/src/components/admin/AdminSetupDialog.tsx",
-        "frontend/src/components/landing/Header.tsx",
-        "frontend/src/pages/LandingPage.tsx"
+        "frontend/DEPLOYMENT.md"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -20,17 +17,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-25"
+        "REQ-31"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-a-reliable-explicit-do-any-admins-exist-check-in-the-motoko-backend-and-update-the-frontend-to-use-it-so-that-admin-bootstrap-and-admin-button-visibility-cannot-regress-due-to-heuristic-client-side-logic",
-      "featureTitle": "Implement a reliable, explicit “do any admins exist” check in the Motoko backend and update the frontend to use it so that admin bootstrap and Admin button visibility cannot regress due to heuristic client-side logic.",
+      "featureId": "feature-harden-the-ic-mainnet-deployment-scripts-frontend-scripts-deploy-ic-sh-and-frontend-scripts-verify-deploy-sh-so-they-are-reliable-to-run-and-produce-clear-english-output-that-guides-the-user-to-the-live-site-url",
+      "featureTitle": "Harden the IC mainnet deployment scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh) so they are reliable to run and produce clear English output that guides the user to the live site URL.",
       "files": [
-        "frontend/src/components/landing/Header.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/LandingPage.tsx"
+        "frontend/scripts/deploy-ic.sh",
+        "frontend/scripts/verify-deploy.sh"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -42,18 +38,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-26"
+        "REQ-32"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-restore-implement-website-based-admin-allowlist-management-version-7-parity-provide-an-admin-ui-to-view-the-current-admin-list-and-add-remove-admin-principals-persisted-and-enforced-by-the-backend-admin-only-write-safe-read-access-as-appropriate",
-      "featureTitle": "Restore/implement website-based admin allowlist management (Version 7 parity): provide an admin UI to view the current admin list and add/remove admin principals, persisted and enforced by the backend (admin-only write; safe read access as appropriate).",
+      "featureId": "feature-ensure-the-live-mainnet-deployment-verification-checklist-in-documentation-and-or-scripts-includes-the-critical-functional-smoke-tests-for-this-app-landing-page-loads-internet-identity-login-works-admin-setup-claim-works-only-when-no-admins-exist-and-admin-panel-opens-for-admins",
+      "featureTitle": "Ensure the live (mainnet) deployment verification checklist in documentation and/or scripts includes the critical functional smoke tests for this app (landing page loads, Internet Identity login works, admin setup claim works only when no admins exist, and admin panel opens for admins).",
       "files": [
-        "frontend/src/components/admin/AdminPanel.tsx",
-        "frontend/src/components/admin/AdminsAdminPanel.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/LandingPage.tsx"
+        "frontend/DEPLOYMENT.md",
+        "frontend/scripts/verify-deploy.sh"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -65,28 +59,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-27"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-rename-the-site-wide-talk-to-sales-label-to-purchase-plans-while-keeping-the-existing-behavior-of-opening-https-discord-gg-nmcbdxyvfe-in-a-new-browser-tab-when-clicked",
-      "featureTitle": "Rename the site-wide “Talk to Sales” label to “Purchase Plans” while keeping the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab when clicked.",
-      "files": [
-        "frontend/src/components/landing/Sections.tsx",
-        "frontend/src/content/siteCopy.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-28"
+        "REQ-33"
       ],
       "confidence": "high"
     }

@@ -44,13 +44,6 @@ export default function Header({ onAdminClick }: HeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const handleAuth = async () => {
     if (isAuthenticated) {
       await clear();
@@ -68,115 +61,108 @@ export default function Header({ onAdminClick }: HeaderProps) {
     }
   };
 
+  const navLinks = [
+    { label: 'Features', href: '#features' },
+    { label: 'Pricing', href: '#pricing' },
+    { label: 'FAQ', href: '#faq' },
+  ];
+
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-background/95 backdrop-blur-md border-b border-border shadow-sm' : 'bg-transparent'
+          isScrolled ? 'bg-background/80 backdrop-blur-lg border-b border-border shadow-sm' : 'bg-transparent'
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <div className="flex items-center space-x-3">
+            <a href="#" className="flex items-center gap-2 group">
               <img
                 src={logoUrl}
                 alt="Logo"
-                className="h-8 md:h-10 w-auto"
+                className="h-8 lg:h-10 w-auto object-contain hidden sm:block transition-transform group-hover:scale-105"
               />
-            </div>
+              <img
+                src={mobileLogoUrl}
+                alt="Logo"
+                className="h-8 w-auto object-contain sm:hidden transition-transform group-hover:scale-105"
+              />
+            </a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              {siteCopy.nav.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
+            <nav className="hidden lg:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
                   className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
                 >
-                  {item.label}
-                </button>
+                  {link.label}
+                </a>
               ))}
             </nav>
 
             {/* Desktop Actions */}
-            <div className="hidden md:flex items-center space-x-3">
+            <div className="hidden lg:flex items-center gap-3">
               {showSetupButton && (
                 <Button
                   onClick={() => setShowAdminSetup(true)}
                   variant="outline"
-                  size="default"
-                  className="font-medium border-primary/50 text-primary hover:bg-primary/10"
+                  size="sm"
+                  className="gap-2"
                 >
-                  <UserPlus className="h-4 w-4 mr-2" />
+                  <UserPlus className="h-4 w-4" />
                   Set up admin access
                 </Button>
               )}
               {showAdminButton && (
-                <Button
-                  onClick={onAdminClick}
-                  variant="outline"
-                  size="default"
-                  className="font-medium"
-                >
-                  <Shield className="h-4 w-4 mr-2" />
+                <Button onClick={onAdminClick} variant="outline" size="sm" className="gap-2">
+                  <Shield className="h-4 w-4" />
                   Admin
                 </Button>
               )}
               {isAuthenticated && <UserProfileDialog />}
-              <Button
-                onClick={handleAuth}
-                disabled={isLoggingIn}
-                variant={isAuthenticated ? 'ghost' : 'default'}
-                size="lg"
-                className="font-semibold"
-              >
-                {isLoggingIn ? 'Signing in...' : isAuthenticated ? 'Sign out' : 'Sign in'}
+              <Button onClick={handleAuth} disabled={isLoggingIn} size="sm">
+                {isLoggingIn ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login'}
+              </Button>
+              <Button asChild size="sm">
+                <a href={settings.navCtaLink}>{settings.navCtaText}</a>
               </Button>
             </div>
 
             {/* Mobile Menu */}
             <Sheet>
-              <SheetTrigger asChild className="md:hidden">
+              <SheetTrigger asChild className="lg:hidden">
                 <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px]">
-                <div className="flex flex-col space-y-6 mt-8">
-                  <img
-                    src={mobileLogoUrl}
-                    alt="Logo"
-                    className="h-8 w-auto mb-4"
-                  />
-                  {siteCopy.nav.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => scrollToSection(item.id)}
-                      className="text-left text-lg font-medium text-foreground/80 hover:text-foreground transition-colors"
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <nav className="flex flex-col gap-4 mt-8">
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      className="text-lg font-medium text-foreground/80 hover:text-foreground transition-colors py-2"
                     >
-                      {item.label}
-                    </button>
+                      {link.label}
+                    </a>
                   ))}
+                  <div className="border-t border-border my-4" />
                   {showSetupButton && (
                     <Button
                       onClick={() => setShowAdminSetup(true)}
                       variant="outline"
-                      size="lg"
-                      className="w-full border-primary/50 text-primary hover:bg-primary/10"
+                      className="w-full gap-2"
                     >
-                      <UserPlus className="h-4 w-4 mr-2" />
+                      <UserPlus className="h-4 w-4" />
                       Set up admin access
                     </Button>
                   )}
                   {showAdminButton && (
-                    <Button
-                      onClick={onAdminClick}
-                      variant="outline"
-                      size="lg"
-                      className="w-full"
-                    >
-                      <Shield className="h-4 w-4 mr-2" />
+                    <Button onClick={onAdminClick} variant="outline" className="w-full gap-2">
+                      <Shield className="h-4 w-4" />
                       Admin
                     </Button>
                   )}
@@ -185,22 +171,20 @@ export default function Header({ onAdminClick }: HeaderProps) {
                       <UserProfileDialog />
                     </div>
                   )}
-                  <Button
-                    onClick={handleAuth}
-                    disabled={isLoggingIn}
-                    variant={isAuthenticated ? 'outline' : 'default'}
-                    size="lg"
-                    className="w-full mt-4"
-                  >
-                    {isLoggingIn ? 'Signing in...' : isAuthenticated ? 'Sign out' : 'Sign in'}
+                  <Button onClick={handleAuth} disabled={isLoggingIn} className="w-full">
+                    {isLoggingIn ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login'}
                   </Button>
-                </div>
+                  <Button asChild className="w-full">
+                    <a href={settings.navCtaLink}>{settings.navCtaText}</a>
+                  </Button>
+                </nav>
               </SheetContent>
             </Sheet>
           </div>
         </div>
       </header>
 
+      {/* Admin Setup Dialog */}
       <AdminSetupDialog open={showAdminSetup} onOpenChange={setShowAdminSetup} />
     </>
   );

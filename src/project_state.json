@@ -1,16 +1,21 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 19,
-  "summary": "Create a website similar to https://stranger-nodes-55e.caffeine.xyz/ named \"tripple host\", with full website customization capabilities (not only pricing) plus user login.",
+  "projectStateVersion": 25,
+  "summary": "Create a website similar to https://stranger-nodes-55e.caffeine.xyz/ named \"tripple host\", with full website customization capabilities (not only pricing) plus user login, and enforce a single permanent admin identity for the whole site.",
   "architectural_notes": [
     "Add authenticated admin interface to edit site content and manage pricing plans (create/update/delete), rather than hardcoded-only plans.",
     "Admin onboarding/management should be handled via website UI (not email-based), including admin allowlist management after initial bootstrap.",
     "Expand the admin interface from pricing-only management to broader site content customization (CMS-like editing) via the website UI.",
-    "Add support for non-admin user authentication/login in addition to admin authentication."
+    "Add support for non-admin user authentication/login in addition to admin authentication.",
+    "Admin bootstrap should be accessible to any authenticated (registered) non-admin user when zero admins exist, enabling the first user to claim admin via the UI.",
+    "Admin model decision: single permanent admin only (Option 1); remove/disable first-admin-claim bootstrap and multi-admin allowlist flows.",
+    "Clarify how the single admin identity is represented/verified with Internet Identity (principal-based) given the user provided an email; may require mapping email->principal or switching to principal allowlist."
   ],
   "known_issues": [
     "Admin option/access appears to be removed in the live app, preventing the user from adding pricing plans and making site changes via the admin UI.",
-    "Version 8 is missing functionality that existed in Version 7; user requests restoring/adding all Version 7 features into the current version."
+    "Version 8 is missing functionality that existed in Version 7; user requests restoring/adding all Version 7 features into the current version.",
+    "Potential mismatch: Internet Identity authentication is principal-based and does not reliably provide/lock to an email (e.g., Upgamer4303@gmail.com); need a concrete method to bind the 'single admin' to an II principal.",
+    "Deployment/build attempt to \"make website live\" failed with an error (AI unable to complete request); live publish workflow may be unreliable or unclear."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -213,6 +218,46 @@
         "REQ-28"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-ensure-that-a-normal-signed-in-user-after-registration-login-via-internet-identity-can-set-up-claim-the-initial-admin-access-from-the-website-ui-when-and-only-when-no-admins-exist-yet-and-that-the-ui-reliably-exposes-this-setup-option-and-upgrades-the-user-to-admin-immediately-after-a-successful-claim",
+      "title": "Ensure that a normal signed-in user (after registration/login via Internet Identity) can set up/claim the initial admin access from the website UI when and only when no admins exist yet, and that the UI reliably exposes this setup option and upgrades the user to admin immediately after a successful claim.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-a-production-ready-publish-deploy-workflow-for-the-current-tripple-host-application-on-the-internet-computer-including-clear-english-deployment-documentation-that-a-developer-can-follow-to-make-the-latest-build-live",
+      "title": "Provide a production-ready publish/deploy workflow for the current Tripple Host application on the Internet Computer, including clear, English deployment documentation that a developer can follow to make the latest build live.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-and-complete-the-deployment-documentation-in-frontend-deployment-md-so-a-developer-can-follow-it-end-to-end-to-publish-the-latest-tripple-host-build-to-internet-computer-mainnet-ic-without-missing-sections-or-broken-markdown-formatting",
+      "title": "Fix and complete the deployment documentation in frontend/DEPLOYMENT.md so a developer can follow it end-to-end to publish the latest Tripple Host build to Internet Computer mainnet (IC) without missing sections or broken Markdown formatting.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-the-ic-mainnet-deployment-scripts-frontend-scripts-deploy-ic-sh-and-frontend-scripts-verify-deploy-sh-so-they-are-reliable-to-run-and-produce-clear-english-output-that-guides-the-user-to-the-live-site-url",
+      "title": "Harden the IC mainnet deployment scripts (frontend/scripts/deploy-ic.sh and frontend/scripts/verify-deploy.sh) so they are reliable to run and produce clear English output that guides the user to the live site URL.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-live-mainnet-deployment-verification-checklist-in-documentation-and-or-scripts-includes-the-critical-functional-smoke-tests-for-this-app-landing-page-loads-internet-identity-login-works-admin-setup-claim-works-only-when-no-admins-exist-and-admin-panel-opens-for-admins",
+      "title": "Ensure the live (mainnet) deployment verification checklist in documentation and/or scripts includes the critical functional smoke tests for this app (landing page loads, Internet Identity login works, admin setup claim works only when no admins exist, and admin panel opens for admins).",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -310,6 +355,24 @@
       "reqIds": [
         "REQ-22"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Allow a normal (non-admin) registered/signed-in user to set up/claim initial admin access via the website UI (admin bootstrap), so admin setup is available after user registration when no admins exist yet.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Enforce a single permanent admin for the whole website (Option 1): only the specified identity (Upgamer4303@gmail.com) can ever be admin; disable admin bootstrap and admin allowlist management for other users.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Publish/deploy the app (make the latest build live).",
+      "reqIds": [],
       "status": "pending"
     }
   ],

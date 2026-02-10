@@ -12,7 +12,7 @@ import { useIsCallerAdmin, useCheckAdminsExist } from '../hooks/useQueries';
 export default function LandingPage() {
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const { identity } = useInternetIdentity();
-  const { data: isAdmin, isLoading: isAdminLoading } = useIsCallerAdmin();
+  const { data: isAdmin } = useIsCallerAdmin();
   const { data: adminsExist = true } = useCheckAdminsExist();
 
   const isAuthenticated = !!identity;

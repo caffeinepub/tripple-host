@@ -94,6 +94,7 @@ export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'addAdmin' : ActorMethod<[AdminPrincipal], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'claimAdminIfNoneExist' : ActorMethod<[string, string], boolean>,
   'createPricingPlan' : ActorMethod<
     [string, string, bigint, bigint, Array<string>],
     bigint

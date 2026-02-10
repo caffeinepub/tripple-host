@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Restore Version 7 parity in the current Version 8 build, focusing on reliable admin access/bootstrap, admin management tooling, and CTA label consistency.
+**Goal:** Make Tripple Host’s Internet Computer (IC) mainnet deployment workflow reliable, fully documented, and easy to verify end-to-end.
 
 **Planned changes:**
-- Restore missing/broken Version 7 end-user and admin-facing flows in Version 8, prioritizing the admin entry/access experience (Admin entry point, Admin Panel access, and Admin Setup when no admins exist).
-- Reinstate Admin Panel management areas for pricing plans CRUD, site content customization, and logo upload/replace, with clear English success/error states.
-- Add a backend query to reliably determine whether any admins exist and update the frontend to use it for admin bootstrap and correct Header button visibility.
-- Restore website-based admin allowlist management: Admin Panel section to view/add/remove admin principals, persisted and enforced by the backend (admin-only writes).
-- Rename all site-wide “Talk to Sales” labels to “Purchase Plans” while preserving the existing behavior of opening https://discord.gg/NMcBdXYVFe in a new browser tab.
+- Fix and complete `frontend/DEPLOYMENT.md` so it is valid, non-abrupt Markdown and provides an ordered, end-to-end mainnet deployment flow referencing `frontend/scripts/deploy-ic.sh` and `frontend/scripts/verify-deploy.sh`.
+- Update `frontend/DEPLOYMENT.md` to clearly state where commands/scripts must be run from (or provide repo-root commands that work as written) and include environment setup aligned with `frontend/.env.example` (including `DFX_NETWORK=ic` and `II_URL=https://identity.ic0.app`).
+- Harden `frontend/scripts/deploy-ic.sh` and `frontend/scripts/verify-deploy.sh` to be reliable when run as documented, detect incorrect invocation directory with clear English errors, and provide clear English success/failure output.
+- Ensure deployment output and verification guidance includes: printing the live frontend URL as `https://<FRONTEND_CANISTER_ID>.ic0.app`, verifying canister status and HTTP accessibility (when `curl` is available), and documenting critical manual smoke tests (landing page load/no console errors, Internet Identity login/logout, initial admin claim only when no admins exist, and Admin Panel access for admins).
 
-**User-visible outcome:** Admins can again access the Admin Panel from the Header to manage plans, content, logos, and the admin list; first-time setups can claim the first admin role when no admins exist; non-admin users retain normal signed-in/profile functionality and see a clear access-denied message when attempting admin-only actions; the CTA now reads “Purchase Plans” and still opens the same Discord link.
+**User-visible outcome:** A developer can follow `frontend/DEPLOYMENT.md` to deploy the latest Tripple Host build to IC mainnet, run verification checks, see the exact live site URL, and complete the required smoke tests to confirm the deployment works.

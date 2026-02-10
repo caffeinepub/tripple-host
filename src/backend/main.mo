@@ -3,11 +3,12 @@ import Map "mo:core/Map";
 import Nat "mo:core/Nat";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
+import Storage "blob-storage/Storage";
+import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
-import Storage "blob-storage/Storage";
-import MixinStorage "blob-storage/Mixin";
+
 
 actor {
   // Types
@@ -91,8 +92,6 @@ actor {
     footerSupport = "Support";
   };
 
-  // adminPrincipals serves as a mirror/cache of admins in the access control system
-  // This is necessary because AccessControl module doesn't expose list/count methods
   var logo : ?Storage.ExternalBlob = null;
   var adminPrincipals = Map.empty<Text, Bool>();
   let accessControlState = AccessControl.initState();
@@ -170,9 +169,7 @@ actor {
     userProfiles.get(caller);
   };
 
-  // Only rejects guests
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    // First check if the caller has at least user privileges (not guest)
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can view profiles");
     };
@@ -290,7 +287,6 @@ actor {
   // Admin List Management
   public type AdminPrincipal = Text;
 
-  // Public query - no auth needed for bootstrap check
   public query func doesAdminExist() : async Bool {
     adminPrincipals.size() > 0;
   };
@@ -302,19 +298,32 @@ actor {
     adminPrincipals.keys().toArray();
   };
 
+  public type AdminToken = Text;
+
+  // Function to claim admin privileges if no admins exist, includes adminToken and userProvidedToken
+  public shared ({ caller }) func claimAdminIfNoneExist(adminToken : Text, userProvidedToken : Text) : async Bool {
+    // SECURITY: Only authenticated users (not guests/anonymous) can claim admin
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can claim admin privileges");
+    };
+
+    // Check if any admins exist
+    if (adminPrincipals.size() > 0) {
+      Runtime.trap("Admin privileges cannot be claimed after setup. Please contact an existing admin for access.");
+    };
+
+    AccessControl.initialize(accessControlState, caller, adminToken, userProvidedToken);
+    adminPrincipals.add(caller.toText(), true);
+    true;
+  };
+
   public shared ({ caller }) func addAdmin(newAdminText : AdminPrincipal) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can add new admins");
     };
 
-    // Parse the principal text
     let newAdminPrincipal = Principal.fromText(newAdminText);
-
-    // Grant admin role in the access control system
-    // Note: assignRole includes its own admin-only guard
     AccessControl.assignRole(accessControlState, caller, newAdminPrincipal, #admin);
-
-    // Mirror in our admin list for doesAdminExist check
     adminPrincipals.add(newAdminText, true);
   };
 
@@ -323,20 +332,14 @@ actor {
       Runtime.trap("Unauthorized: Only admins can remove admins");
     };
 
-    // Prevent removing the last admin
     if (adminPrincipals.size() <= 1) {
       Runtime.trap("Cannot remove the last admin");
     };
 
-    // Prevent self-removal
     if (caller.toText() == adminText) {
       Runtime.trap("Cannot remove yourself as admin");
     };
 
-    // Remove from our mirror list
-    // Note: AccessControl module doesn't provide a way to revoke roles,
-    // so we can only remove from our tracking. The user will still have
-    // admin privileges in AccessControl until canister upgrade.
     adminPrincipals.remove(adminText);
   };
 };

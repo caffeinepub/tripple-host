@@ -30,7 +30,7 @@ export default function AdminSetupDialog({ open, onOpenChange }: AdminSetupDialo
         setShowSuccess(false);
       }, 2000);
     } catch (error) {
-      // Error is handled by mutation state
+      // Error is handled by mutation state and displayed in the alert below
     }
   };
 

@@ -74,6 +74,7 @@ export enum UserRole {
 export interface backendInterface {
     addAdmin(newAdminText: AdminPrincipal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    claimAdminIfNoneExist(adminToken: string, userProvidedToken: string): Promise<boolean>;
     createPricingPlan(name: string, description: string, priceCents: bigint, durationDays: bigint, features: Array<string>): Promise<bigint>;
     deletePricingPlan(id: bigint): Promise<void>;
     doesAdminExist(): Promise<boolean>;
